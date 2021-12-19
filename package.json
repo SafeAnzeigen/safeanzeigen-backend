@@ -2,10 +2,12 @@
   "name": "safeanzeigen-backend",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon src/index.ts",
+    "ts:build": "rm -rf ./dist && tsc",
+    "prestart": "npm run ts:build",
+    "start": "node src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,9 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "prettier": "^2.5.1"
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
   }
 }
