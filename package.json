@@ -1,0 +1,36 @@
+{
+  "name": "safeanzeigen-backend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SafeAnzeigen/safeanzeigen-backend.git"
+  },
+  "keywords": [
+    "nodejs",
+    "expressjs",
+    "typescript",
+    "backend",
+    "bachelor-thesis"
+  ],
+  "author": "Sascha Majewsky",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb": "^19.0.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "prettier": "^2.5.1"
+  }
+}
