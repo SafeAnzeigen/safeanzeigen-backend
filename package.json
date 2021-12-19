@@ -22,8 +22,13 @@
   ],
   "author": "Sascha Majewsky",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2"
+  },
   "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.5.0",
     "eslint-config-airbnb": "^19.0.2",
