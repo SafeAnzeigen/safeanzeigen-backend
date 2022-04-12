@@ -1,12 +1,11 @@
 require('dotenv').config();
 
 const server = require('./server');
-/* const db = require('./db/db'); */
+const db = require('./database/db');
 
-server.listen(
-  process.env.PORT || 5000,
-  () => console.log('Server running.')
-  /* db
+server.listen(process.env.PORT || 5000, () =>
+  /* console.log('Server running.') */
+  db
     .raw('select 1')
     .then(() => {
       console.log('Connection to database successful.');
@@ -17,5 +16,5 @@ server.listen(
     .catch((error) => {
       console.log('Connection to database failed. ', error);
       process.exit(1);
-    }) */
+    })
 );
