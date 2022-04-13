@@ -4,7 +4,6 @@ const server = require('./server');
 const db = require('./database/db');
 
 server.listen(process.env.PORT || 5000, () =>
-  /* console.log('Server running.') */
   db
     .raw('select 1')
     .then(() => {
