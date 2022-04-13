@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const parse = require('pg-connection-string').parse;
 const pgconfig = parse(process.env.DATABASE_URL);
 
@@ -15,10 +15,10 @@ module.exports = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './migrations',
+      directory: './src/database/migrations',
     },
     seeds: {
-      directory: './seeds',
+      directory: './src/database/seeds',
     },
   },
 };
