@@ -3,7 +3,7 @@ const router = express.Router();
 
 const controller = require('./searches-controller');
 
-/* router.get("/", controller.getAllSearches); */
+router.get('/', controller.getAllSearches);
 router.get('/:id', controller.getSearchById);
 router.get('/userid/:user_id', controller.getAllSearchesByUserId);
 router.post('/', controller.addSearch);
