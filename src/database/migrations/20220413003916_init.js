@@ -1,7 +1,8 @@
-exports.up = function (knex) {
+exports.up = async (knex) => {
+  await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
   return knex.schema
     .createTable('users', (table) => {
-      table.uuid('user_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('user_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table.boolean('is_active').notNullable().defaultTo('true');
       table.string('email', 128).notNullable().unique();
       table.string('phone_number', 50).unique();
@@ -16,7 +17,7 @@ exports.up = function (knex) {
       table.timestamps(true, true);
     })
     .createTable('contact_infos', (table) => {
-      table.uuid('contact_info_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('contact_info_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table
         .uuid('fk_user_id')
         .notNullable()
@@ -33,7 +34,7 @@ exports.up = function (knex) {
       table.timestamps(true, true);
     })
     .createTable('searches', (table) => {
-      table.uuid('search_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('search_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table
         .uuid('fk_user_id')
         .notNullable()
@@ -46,12 +47,12 @@ exports.up = function (knex) {
       table.timestamps(true, true);
     })
     .createTable('categories', (table) => {
-      table.uuid('category_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('category_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table.string('name').notNullable().unique();
       table.timestamps(true, true);
     })
     .createTable('subcategories', (table) => {
-      table.uuid('subcategory_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('subcategory_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table
         .uuid('fk_category_id')
         .notNullable()
@@ -63,7 +64,7 @@ exports.up = function (knex) {
       table.timestamps(true, true);
     })
     .createTable('advertisements', (table) => {
-      table.uuid('advertisement_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('advertisement_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table
         .uuid('fk_user_id')
         .notNullable()
@@ -107,7 +108,7 @@ exports.up = function (knex) {
       table.timestamps(true, true);
     })
     .createTable('favorites', (table) => {
-      table.uuid('favorite_id').primary().defaultTo(knex.raw('(UUID())'));
+      table.uuid('favorite_id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
       table
         .uuid('fk_advertisement_id')
         .notNullable()
