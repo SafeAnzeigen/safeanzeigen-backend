@@ -50,7 +50,7 @@ const getAllSearchesByUserId = async (req, res) => {
     searchesService
       .findSearchesByUserId(user_id)
       .then((searches) => {
-        searches && searches.length /* TODO: Optional .? */
+        searches?.length
           ? res.status(200).json({
               searches,
             })
@@ -72,9 +72,9 @@ const getAllSearchesByUserId = async (req, res) => {
 };
 
 const addSearch = (req, res) => {
-  const searchDTO = ({ user_id, search_term } = req.body);
+  const searchDTO = ({ fk_user_id, search_term } = req.body);
 
-  if (user_id && search_term) {
+  if (fk_user_id && search_term) {
     searchesService
       .add(searchDTO)
       .then((newSearch) =>

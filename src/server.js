@@ -37,4 +37,10 @@ server.get('/', function rootHandler(req, res) {
   });
 });
 
+const SearchesRouter = require('./api/resources/searches/searches-router');
+const ContactInfosRouter = require('./api/resources/contact-infos/contact-infos-router');
+
+server.use('/v1/searches', SearchesRouter);
+server.use('/v1/contact-infos', ContactInfosRouter);
+
 module.exports = server;

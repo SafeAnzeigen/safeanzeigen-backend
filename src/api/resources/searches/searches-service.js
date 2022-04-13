@@ -12,7 +12,7 @@ const findById = (search_id) =>
 
 const findSearchesByUserId = (user_id) =>
   db('searches as s')
-    .join('users as u', 'u.user_id', 's.fk_user_id')
+    .join('users as u', 'u.user_id', 's.fk_user_id') /* TODO: This join is not needed */
     .select(
       's.search_id',
       's.fk_user_id',
@@ -36,6 +36,5 @@ module.exports = {
   findById,
   findSearchesByUserId,
   add,
-  update,
   deactivate,
 };
