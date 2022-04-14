@@ -1,26 +1,33 @@
 const db = require('../../../database/db');
 
-const find = () => db('categories');
+const find = () => db('users');
 
-const findById = (category_id) =>
-  db('categories')
-    .where({ category_id })
+const findById = (user_id) =>
+  db('users')
+    .where({ user_id })
     .first()
-    .then((category) => (category ? category : null));
+    .then((user) => (user ? user : null));
 
-const add = (category) =>
-  db('categories')
-    .insert(category, 'category_id')
-    .then(([category_id]) => findById(category_id));
+const findByEmail = (email) =>
+  db('users')
+    .where({ email })
+    .first()
+    .then((user) => (user ? user : null));
 
-const update = (category_id, changes) => db('categories').where({ category_id }).update(changes);
+const add = (user) =>
+  db('users')
+    .insert(user, 'user_id')
+    .then(([user_id]) => findById(user_id));
 
-const remove = (category_id) => db('categories').where('category_id', category_id).del();
+const update = (user_id, changes) => db('users').where({ user_id }).update(changes);
+
+const deactivate = (user_id, deactivation) => db('users').where({ user_id }).update(deactivation);
 
 module.exports = {
   find,
   findById,
+  findByEmail,
   add,
   update,
-  remove,
+  deactivate,
 };
