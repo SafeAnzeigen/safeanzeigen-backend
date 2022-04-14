@@ -10,14 +10,18 @@ const findById = (search_id) =>
 
 const findSearchesByUserId = (user_id) =>
   db('searches as s')
-    .join('users as u', 'u.user_id', 's.fk_user_id') /* TODO: This join is not needed */
+    .join('users as u', 'u.user_id', 's.fk_user_id')
     .select(
       's.search_id',
       's.fk_user_id',
       's.is_active',
       's.search_term',
       's.created_at',
-      's.updated_at'
+      's.updated_at',
+      'u.user_id',
+      'u.email',
+      'u.firstname',
+      'u.lastname'
     )
     .where('s.fk_user_id', user_id);
 

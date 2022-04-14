@@ -10,7 +10,7 @@ const findById = (contact_info_id) =>
 
 const findContactInfoByUserId = (user_id) =>
   db('contact_infos as c')
-    .join('users as u', 'u.user_id', 'c.fk_user_id') /* TODO: This join is not needed */
+    .join('users as u', 'u.user_id', 'c.fk_user_id')
     .select(
       'c.contact_info_id',
       'c.fk_user_id',
@@ -22,7 +22,11 @@ const findContactInfoByUserId = (user_id) =>
       'c.county',
       'c.country',
       'c.created_at',
-      'c.updated_at'
+      'c.updated_at',
+      'u.user_id',
+      'u.email',
+      'u.firstname',
+      'u.lastname'
     )
     .where('c.fk_user_id', user_id);
 
