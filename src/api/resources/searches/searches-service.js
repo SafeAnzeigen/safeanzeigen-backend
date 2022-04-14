@@ -1,8 +1,6 @@
 const db = require('../../../database/db');
 
-function find() {
-  return db('searches');
-}
+const find = () => db('searches');
 
 const findById = (search_id) =>
   db('searches')

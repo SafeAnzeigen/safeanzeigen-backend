@@ -71,7 +71,7 @@ const updateCategory = (req, res) => {
   const { name } = req.body;
 
   if (req.body.category_id && name) {
-    CategoriesService.update(req.body.category_id, name)
+    CategoriesService.update(req.body.category_id, { name })
       .then((successFlag) =>
         successFlag > 0
           ? res.status(200).json({
