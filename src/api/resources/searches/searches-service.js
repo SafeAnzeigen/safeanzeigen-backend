@@ -25,6 +25,23 @@ const findSearchesByUserId = (user_id) =>
     )
     .where('s.fk_user_id', user_id);
 
+const findSearchesByUserEmail = (user_email) =>
+  db('searches as s')
+    .join('users as u', 'u.user_id', 's.fk_user_id')
+    .select(
+      's.search_id',
+      's.fk_user_id',
+      's.is_active',
+      's.search_term',
+      's.created_at',
+      's.updated_at',
+      'u.user_id',
+      'u.email',
+      'u.firstname',
+      'u.lastname'
+    )
+    .where('u.email', user_email);
+
 const add = (search) =>
   db('searches')
     .insert(search, 'search_id')
@@ -37,6 +54,7 @@ module.exports = {
   find,
   findById,
   findSearchesByUserId,
+  findSearchesByUserEmail,
   add,
   deactivate,
 };

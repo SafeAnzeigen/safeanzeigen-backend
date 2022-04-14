@@ -2,11 +2,7 @@ const SubcategoriesService = require('./categories-service');
 
 const getAllSubcategories = (req, res) =>
   SubcategoriesService.find()
-    .then((subcategories) =>
-      res.status(200).json({
-        subcategories,
-      })
-    )
+    .then((subcategories) => res.status(200).json({ subcategories }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Subkategorien. ', error);
       return res.status(500).json({
@@ -21,12 +17,8 @@ const getSubcategoryById = (req, res) => {
     SubcategoriesService.findById(subcategory_id)
       .then((subcategory) => {
         subcategory
-          ? res.status(200).json({
-              subcategory,
-            })
-          : res.status(404).json({
-              message: 'Diese Subkategorie wurde nicht gefunden.',
-            });
+          ? res.status(200).json({ subcategory })
+          : res.status(404).json({ message: 'Diese Subkategorie wurde nicht gefunden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von dieser Subkategorie. ', error);
@@ -49,12 +41,8 @@ const getAllSubcategoriesByCategoryId = async (req, res) => {
       .findSubcategoriesByCategoryId(category_id)
       .then((subcategories) => {
         subcategories?.length
-          ? res.status(200).json({
-              subcategories,
-            })
-          : res.status(404).json({
-              message: 'Es konnten keine Subkategorien gefunden werden.',
-            });
+          ? res.status(200).json({ subcategories })
+          : res.status(404).json({ message: 'Es konnten keine Subkategorien gefunden werden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von Subkategorien. ', error);
@@ -77,12 +65,8 @@ const getAllSubcategoriesByCategoryName = async (req, res) => {
       .findSubcategoriesByCategoryName(category_name)
       .then((subcategories) => {
         subcategories?.length
-          ? res.status(200).json({
-              subcategories,
-            })
-          : res.status(404).json({
-              message: 'Es konnten keine Subkategorien gefunden werden.',
-            });
+          ? res.status(200).json({ subcategories })
+          : res.status(404).json({ message: 'Es konnten keine Subkategorien gefunden werden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von Subkategorien. ', error);
@@ -131,9 +115,7 @@ const updateSubcategory = (req, res) => {
     SubcategoriesService.update(req.body.subcategory_id, updateSubcategoryDTO)
       .then((successFlag) =>
         successFlag > 0
-          ? res.status(200).json({
-              message: 'Die Subkategorie wurde aktualisiert.',
-            })
+          ? res.status(200).json({ message: 'Die Subkategorie wurde aktualisiert.' })
           : res.status(500).json({
               message:
                 'Fehler bei der Aktualisierung der Subkategorie, da Fehler in der Datenbank auftraten.',
@@ -157,11 +139,7 @@ const deleteSubcategoryById = (req, res) => {
 
   if (subcategory_id) {
     SubcategoriesService.remove(subcategory_id)
-      .then(() =>
-        res.status(200).json({
-          message: 'Die Subkategorie wurde gelöscht.',
-        })
-      )
+      .then(() => res.status(200).json({ message: 'Die Subkategorie wurde gelöscht.' }))
       .catch((error) => {
         console.log('Fehler beim Löschen der Subkategorie. ', error);
         return res.status(500).json({

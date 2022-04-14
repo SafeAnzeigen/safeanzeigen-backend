@@ -1,20 +1,43 @@
-const CategoriesService = require('./categories-service');
+const UsersService = require('./users-service');
 
-const getAllCategories = (req, res) =>
-  CategoriesService.find()
-    .then((categories) => res.status(200).json({ categories }))
+const getAllUsers = (req, res) =>
+  UsersService.find()
+    .then((users) => res.status(200).json({ users }))
     .catch((error) => {
-      console.log('Fehler beim Erhalten von allen Kategorien. ', error);
+      console.log('Fehler beim Erhalten von aller Nutzer. ', error);
       return res.status(500).json({
-        message: 'Fehler beim Erhalten von allen Kategorien.',
+        message: 'Fehler beim Erhalten von aller Nutzer.',
       });
     });
 
-const getCategoryById = (req, res) => {
+const getUserById = (req, res) => {
+  const { user_id } = req.params;
+
+  if (user_id) {
+    UsersService.findById(user_id)
+      .then((user) => {
+        user
+          ? res.status(200).json({ user })
+          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von dieser Kategorie. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von dieser Kategorie.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von dieser Kategorie, da Angaben fehlen.',
+    });
+  }
+};
+
+const getUserByEmail = (req, res) => {
   const { category_id } = req.params;
 
   if (category_id) {
-    CategoriesService.findById(category_id)
+    UsersService.findById(category_id)
       .then((category) => {
         category
           ? res.status(200).json({ category })
@@ -33,11 +56,11 @@ const getCategoryById = (req, res) => {
   }
 };
 
-const addCategory = (req, res) => {
+const addUser = (req, res) => {
   const { name } = req.body;
 
   if (name) {
-    CategoriesService.add(name)
+    UsersService.add(name)
       .then((newCategory) =>
         res.status(201).json({
           category_id: newCategory.category_id,
@@ -59,11 +82,11 @@ const addCategory = (req, res) => {
   }
 };
 
-const updateCategory = (req, res) => {
+const updateUser = (req, res) => {
   const { name } = req.body;
 
   if (req.body.category_id && name) {
-    CategoriesService.update(req.body.category_id, { name })
+    UsersService.update(req.body.category_id, { name })
       .then((successFlag) =>
         successFlag > 0
           ? res.status(200).json({ message: 'Die Kategorie wurde aktualisiert.' })
@@ -85,11 +108,11 @@ const updateCategory = (req, res) => {
   }
 };
 
-const deleteCategoryById = (req, res) => {
+const deactivateUser = (req, res) => {
   const { category_id } = req.params;
 
   if (category_id) {
-    CategoriesService.remove(category_id)
+    UsersService.remove(category_id)
       .then(() => res.status(200).json({ message: 'Die Kategorie wurde gelöscht.' }))
       .catch((error) => {
         console.log('Fehler beim Löschen der Kategorie. ', error);
@@ -105,9 +128,10 @@ const deleteCategoryById = (req, res) => {
 };
 
 module.exports = {
-  getAllCategories,
-  getCategoryById,
-  addCategory,
-  updateCategory,
-  deleteCategoryById,
+  getAllUsers,
+  getUserById,
+  getUserByEmail,
+  addUser,
+  updateUser,
+  deactivateUser,
 };

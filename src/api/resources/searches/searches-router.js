@@ -6,6 +6,7 @@ const controller = require('./searches-controller');
 router.get('/', controller.getAllSearches);
 router.get('/:search_id', controller.getSearchById);
 router.get('/userid/:user_id', controller.getAllSearchesByUserId);
+router.get('/useremail/:user_email', controller.getAllSearchesByUserEmail);
 router.post('/', controller.addSearch);
 router.delete('/:search_id', controller.deactivateSearch);
 

@@ -30,6 +30,28 @@ const findContactInfoByUserId = (user_id) =>
     )
     .where('c.fk_user_id', user_id);
 
+const findContactInfoByUserEmail = (user_email) =>
+  db('contact_infos as c')
+    .join('users as u', 'u.user_id', 'c.fk_user_id')
+    .select(
+      'c.contact_info_id',
+      'c.fk_user_id',
+      'c.is_active',
+      'c.street',
+      'c.street_number',
+      'c.city',
+      'c.zip',
+      'c.county',
+      'c.country',
+      'c.created_at',
+      'c.updated_at',
+      'u.user_id',
+      'u.email',
+      'u.firstname',
+      'u.lastname'
+    )
+    .where('u.email', user_email);
+
 const add = (contactInfo) =>
   db('contact_infos')
     .insert(contactInfo, 'contact_info_id')
@@ -45,6 +67,7 @@ module.exports = {
   find,
   findById,
   findContactInfoByUserId,
+  findContactInfoByUserEmail,
   add,
   update,
   deactivate,
