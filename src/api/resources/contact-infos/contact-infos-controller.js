@@ -35,7 +35,7 @@ const getContactInfoById = (req, res) => {
   }
 };
 
-const getAllContactInfosByUserId = async (req, res) => {
+const getAllContactInfosByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
@@ -61,7 +61,7 @@ const getAllContactInfosByUserId = async (req, res) => {
   }
 };
 
-const getAllContactInfosByUserEmail = async (req, res) => {
+const getAllContactInfosByUserEmail = (req, res) => {
   const { user_email } = req.params;
 
   if (user_email) {

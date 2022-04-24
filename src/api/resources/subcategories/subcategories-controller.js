@@ -33,7 +33,7 @@ const getSubcategoryById = (req, res) => {
   }
 };
 
-const getAllSubcategoriesByCategoryId = async (req, res) => {
+const getAllSubcategoriesByCategoryId = (req, res) => {
   const { category_id } = req.params;
 
   if (category_id) {
@@ -57,7 +57,7 @@ const getAllSubcategoriesByCategoryId = async (req, res) => {
   }
 };
 
-const getAllSubcategoriesByCategoryName = async (req, res) => {
+const getAllSubcategoriesByCategoryName = (req, res) => {
   const { category_name } = req.params;
 
   if (category_name) {

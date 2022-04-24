@@ -59,7 +59,7 @@ const getFavoriteById = (req, res) => {
   }
 }; */
 
-const getAllFavoritesByAdvertisementId = async (req, res) => {
+const getAllFavoritesByAdvertisementId = (req, res) => {
   const { advertisement_id } = req.params;
 
   if (advertisement_id) {
@@ -83,7 +83,7 @@ const getAllFavoritesByAdvertisementId = async (req, res) => {
   }
 };
 
-const getAllFavoritesByUserId = async (req, res) => {
+const getAllFavoritesByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {

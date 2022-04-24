@@ -10,4 +10,7 @@ router.post('/', controller.addUser);
 router.put('/', controller.updateUser);
 router.delete('/:user_id', controller.deactivateUser);
 
+/* Registration */
+/* Login */
+
 module.exports = router;

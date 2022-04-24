@@ -35,7 +35,7 @@ const getSearchById = (req, res) => {
   }
 };
 
-const getAllSearchesByUserId = async (req, res) => {
+const getAllSearchesByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
@@ -59,7 +59,7 @@ const getAllSearchesByUserId = async (req, res) => {
   }
 };
 
-const getAllSearchesByUserEmail = async (req, res) => {
+const getAllSearchesByUserEmail = (req, res) => {
   const { user_email } = req.params;
 
   if (user_email) {
