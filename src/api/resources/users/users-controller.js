@@ -33,6 +33,29 @@ const getUserById = (req, res) => {
   }
 };
 
+const getUserByClerkId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    UsersService.getUserByClerkId(clerk_user_id)
+      .then((user) => {
+        user
+          ? res.status(200).json({ user })
+          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von diesem Nutzer.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
+    });
+  }
+};
+
 const getUserByEmail = (req, res) => {
   const { email } = req.params;
 
@@ -57,13 +80,34 @@ const getUserByEmail = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  const userDTO = ({ email, phone_number, firstname, lastname, gender, role } = req.body);
+  const userDTO = ({
+    clerk_user_id,
+    firstname,
+    lastname,
+    phone_number,
+    phone_verified,
+    email,
+    email_verified,
+  } = req.body);
 
-  if (email && phone_number && firstname && lastname && gender && role) {
+  if (
+    clerk_user_id &&
+    firstname &&
+    lastname &&
+    phone_number &&
+    phone_verified &&
+    email &&
+    email_verified
+  ) {
+    userDTO.role = 'user';
+    userDTO.gender = 'unbekannt';
+    userDTO.user_photo = `https://source.boringavatars.com/beam/300/${clerk_user_id}${clerk_user_id}${clerk_user_id}?colors=2f70e9,e76f51,ffc638,f4a261,e97c2f`;
+
     UsersService.add(userDTO)
       .then((newUser) =>
         res.status(201).json({
           user_id: newUser.user_id,
+          clerk_user_id: newUser.clerk_user_id,
           is_active: newUser.is_active,
           email: newUser.email,
           phone_number: newUser.phone_number,
@@ -95,32 +139,28 @@ const addUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const updateUserDTO = ({
-    email,
-    phone_number,
     firstname,
     lastname,
-    gender,
-    role,
-    user_photo,
+    phone_number,
     phone_verified,
+    email,
     email_verified,
+    gender,
     kyc_verified,
   } = req.body);
 
   if (
-    req.body.user_id &&
-    (email ||
-      phone_number ||
-      firstname ||
+    req.body.clerk_user_id &&
+    (firstname ||
       lastname ||
-      gender ||
-      role ||
-      user_photo ||
+      phone_number ||
       phone_verified ||
+      email ||
       email_verified ||
+      gender ||
       kyc_verified)
   ) {
-    UsersService.update(req.body.user_id, updateUserDTO)
+    UsersService.update(req.body.clerk_user_id, updateUserDTO)
       .then((successFlag) =>
         successFlag > 0
           ? res.status(200).json({ message: 'Der Nutzer wurde aktualisiert.' })
@@ -164,6 +204,7 @@ const deactivateUser = (req, res) => {
 module.exports = {
   getAllUsers,
   getUserById,
+  getUserByClerkId,
   getUserByEmail,
   addUser,
   updateUser,
