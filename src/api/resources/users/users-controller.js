@@ -33,6 +33,32 @@ const getUserById = (req, res) => {
   }
 };
 
+const getUserByClerkId = (req, res) => {
+  const { clerk_user_id } = req.params;
+  const token = req.headers.authorization;
+
+  console.log('TOKEN', token);
+
+  if (clerk_user_id) {
+    UsersService.getUserByClerkId(clerk_user_id)
+      .then((user) => {
+        user
+          ? res.status(200).json({ user })
+          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von diesem Nutzer.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
+    });
+  }
+};
+
 const getUserByEmail = (req, res) => {
   const { email } = req.params;
 
@@ -164,6 +190,7 @@ const deactivateUser = (req, res) => {
 module.exports = {
   getAllUsers,
   getUserById,
+  getUserByClerkId,
   getUserByEmail,
   addUser,
   updateUser,

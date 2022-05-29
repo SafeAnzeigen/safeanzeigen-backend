@@ -8,6 +8,12 @@ const findById = (user_id) =>
     .first()
     .then((user) => (user ? user : null));
 
+const getUserByClerkId = (clerk_user_id) =>
+  db('users')
+    .where({ clerk_user_id })
+    .first()
+    .then((user) => (user ? user : null));
+
 const findByEmail = (email) =>
   db('users')
     .where({ email })
@@ -26,6 +32,7 @@ const deactivate = (user_id, deactivation) => db('users').where({ user_id }).upd
 module.exports = {
   find,
   findById,
+  getUserByClerkId,
   findByEmail,
   add,
   update,
