@@ -35,9 +35,6 @@ const getUserById = (req, res) => {
 
 const getUserByClerkId = (req, res) => {
   const { clerk_user_id } = req.params;
-  const token = req.headers.authorization;
-  console.log('req.decodedToken', req.decodedToken);
-  console.log('TOKEN', token);
 
   if (clerk_user_id) {
     UsersService.getUserByClerkId(clerk_user_id)
@@ -92,8 +89,6 @@ const addUser = (req, res) => {
     email,
     email_verified,
   } = req.body);
-
-  console.log('userDTO', userDTO);
 
   if (
     clerk_user_id &&
