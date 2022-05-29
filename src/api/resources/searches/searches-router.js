@@ -4,9 +4,10 @@ const router = express.Router();
 const controller = require('./searches-controller');
 
 router.get('/', controller.getAllSearches);
-router.get('/:id', controller.getSearchById);
+router.get('/:search_id', controller.getSearchById);
 router.get('/userid/:user_id', controller.getAllSearchesByUserId);
+router.get('/useremail/:user_email', controller.getAllSearchesByUserEmail);
 router.post('/', controller.addSearch);
-router.delete('/:id', controller.deactivateSearch);
+router.delete('/:search_id', controller.deactivateSearch);
 
 module.exports = router;

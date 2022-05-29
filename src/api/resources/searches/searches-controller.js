@@ -3,11 +3,7 @@ const searchesService = require('./searches-service');
 const getAllSearches = (req, res) =>
   searchesService
     .find()
-    .then((searches) =>
-      res.status(200).json({
-        searches,
-      })
-    )
+    .then((searches) => res.status(200).json({ searches }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Suchebegriffen. ', error);
       return res.status(500).json({
@@ -23,12 +19,8 @@ const getSearchById = (req, res) => {
       .findById(search_id)
       .then((search) => {
         search
-          ? res.status(200).json({
-              search,
-            })
-          : res.status(404).json({
-              message: 'Dieser Suchebegriff wurde nicht gefunden.',
-            });
+          ? res.status(200).json({ search })
+          : res.status(404).json({ message: 'Dieser Suchebegriff wurde nicht gefunden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von diesem Suchebegriff. ', error);
@@ -43,7 +35,7 @@ const getSearchById = (req, res) => {
   }
 };
 
-const getAllSearchesByUserId = async (req, res) => {
+const getAllSearchesByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
@@ -51,12 +43,32 @@ const getAllSearchesByUserId = async (req, res) => {
       .findSearchesByUserId(user_id)
       .then((searches) => {
         searches?.length
-          ? res.status(200).json({
-              searches,
-            })
-          : res.status(404).json({
-              message: 'Es konnten keine Suchebegriffe gefunden werden.',
-            });
+          ? res.status(200).json({ searches })
+          : res.status(404).json({ message: 'Es konnten keine Suchebegriffe gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Suchebegriffen. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Suchebegriffen.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Suchebegriffen, da Angaben fehlen.',
+    });
+  }
+};
+
+const getAllSearchesByUserEmail = (req, res) => {
+  const { user_email } = req.params;
+
+  if (user_email) {
+    searchesService
+      .findSearchesByUserEmail(user_email)
+      .then((searches) => {
+        searches?.length
+          ? res.status(200).json({ searches })
+          : res.status(404).json({ message: 'Es konnten keine Suchebegriffe gefunden werden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von Suchebegriffen. ', error);
@@ -106,11 +118,7 @@ const deactivateSearch = (req, res) => {
   if (search_id) {
     searchesService
       .deactivate(search_id, { is_active: false })
-      .then(() =>
-        res.status(200).json({
-          message: 'Der Suchebegriff wurde deaktiviert.',
-        })
-      )
+      .then(() => res.status(200).json({ message: 'Der Suchebegriff wurde deaktiviert.' }))
       .catch((error) => {
         console.log('Fehler beim Deaktivieren des Suchebegriffs. ', error);
         return res.status(500).json({
@@ -128,6 +136,7 @@ module.exports = {
   getAllSearches,
   getSearchById,
   getAllSearchesByUserId,
+  getAllSearchesByUserEmail,
   addSearch,
   deactivateSearch,
 };
