@@ -3,11 +3,7 @@ const contactInfosService = require('./contact-infos-service');
 const getAllContactInfos = (req, res) =>
   contactInfosService
     .find()
-    .then((contactInfos) =>
-      res.status(200).json({
-        contactInfos,
-      })
-    )
+    .then((contactInfos) => res.status(200).json({ contactInfos }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Kontaktinformationen. ', error);
       return res.status(500).json({
@@ -23,12 +19,8 @@ const getContactInfoById = (req, res) => {
       .findById(contact_info_id)
       .then((contactInfo) => {
         contactInfo
-          ? res.status(200).json({
-              contactInfo,
-            })
-          : res.status(404).json({
-              message: 'Dieser Kontaktinformation wurde nicht gefunden.',
-            });
+          ? res.status(200).json({ contactInfo })
+          : res.status(404).json({ message: 'Dieser Kontaktinformation wurde nicht gefunden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von dieser Kontaktinformation. ', error);
@@ -43,7 +35,7 @@ const getContactInfoById = (req, res) => {
   }
 };
 
-const getAllContactInfosByUserId = async (req, res) => {
+const getAllContactInfosByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
@@ -51,12 +43,36 @@ const getAllContactInfosByUserId = async (req, res) => {
       .findContactInfoByUserId(user_id)
       .then((contactInfos) => {
         contactInfos?.length
-          ? res.status(200).json({
-              contactInfos,
-            })
-          : res.status(404).json({
-              message: 'Es konnten keine Kontaktinformationen gefunden werden.',
-            });
+          ? res.status(200).json({ contactInfos })
+          : res
+              .status(404)
+              .json({ message: 'Es konnten keine Kontaktinformationen gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Kontaktinformationen. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Kontaktinformationen.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Kontaktinformationen, da Angaben fehlen.',
+    });
+  }
+};
+
+const getAllContactInfosByUserEmail = (req, res) => {
+  const { user_email } = req.params;
+
+  if (user_email) {
+    contactInfosService
+      .findContactInfoByUserEmail(user_email)
+      .then((contactInfos) => {
+        contactInfos?.length
+          ? res.status(200).json({ contactInfos })
+          : res
+              .status(404)
+              .json({ message: 'Es konnten keine Kontaktinformationen gefunden werden.' });
       })
       .catch((error) => {
         console.log('Fehler beim Erhalten von Kontaktinformationen. ', error);
@@ -119,9 +135,7 @@ const updateContactInfo = (req, res) => {
       .update(req.body.contact_info_id, updateContactInfoDTO)
       .then((successFlag) =>
         successFlag > 0
-          ? res.status(200).json({
-              message: 'Die Kontaktinformation wurden aktualisiert.',
-            })
+          ? res.status(200).json({ message: 'Die Kontaktinformation wurden aktualisiert.' })
           : res.status(500).json({
               message:
                 'Fehler bei der Aktualisierung der Kontaktinformationen, da Fehler in der Datenbank auftraten.',
@@ -146,11 +160,7 @@ const deactivateContactInfo = (req, res) => {
   if (contact_info_id) {
     contactInfosService
       .deactivate(contact_info_id, { is_active: false })
-      .then(() =>
-        res.status(200).json({
-          message: 'Die Kontaktinformationen wurde deaktiviert.',
-        })
-      )
+      .then(() => res.status(200).json({ message: 'Die Kontaktinformationen wurde deaktiviert.' }))
       .catch((error) => {
         console.log('Fehler beim Deaktivieren der Kontaktinformationen. ', error);
         return res.status(500).json({
@@ -168,6 +178,7 @@ module.exports = {
   getAllContactInfos,
   getContactInfoById,
   getAllContactInfosByUserId,
+  getAllContactInfosByUserEmail,
   addContactInfo,
   updateContactInfo,
   deactivateContactInfo,
