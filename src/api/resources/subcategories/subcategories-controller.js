@@ -1,4 +1,4 @@
-const SubcategoriesService = require('./categories-service');
+const SubcategoriesService = require('./subcategories-service');
 
 const getAllSubcategories = (req, res) =>
   SubcategoriesService.find()
