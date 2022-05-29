@@ -25,7 +25,7 @@ const add = (user) =>
     .insert(user, 'user_id')
     .then(([user_id]) => findById(user_id));
 
-const update = (user_id, changes) => db('users').where({ user_id }).update(changes);
+const update = (clerk_user_id, changes) => db('users').where({ clerk_user_id }).update(changes);
 
 const deactivate = (user_id, deactivation) => db('users').where({ user_id }).update(deactivation);
 

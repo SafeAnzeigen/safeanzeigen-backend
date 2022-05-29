@@ -20,7 +20,12 @@ router.post(
   validationMiddleware.clerkUserOwnsThisResource,
   controller.addUser
 );
-router.put('/', controller.updateUser);
+router.put(
+  '/',
+  authenticationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.updateUser
+);
 router.delete('/:user_id', controller.deactivateUser);
 
 module.exports = router;

@@ -144,32 +144,28 @@ const addUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const updateUserDTO = ({
-    email,
-    phone_number,
     firstname,
     lastname,
-    gender,
-    role,
-    user_photo,
+    phone_number,
     phone_verified,
+    email,
     email_verified,
+    gender,
     kyc_verified,
   } = req.body);
 
   if (
-    req.body.user_id &&
-    (email ||
-      phone_number ||
-      firstname ||
+    req.body.clerk_user_id &&
+    (firstname ||
       lastname ||
-      gender ||
-      role ||
-      user_photo ||
+      phone_number ||
       phone_verified ||
+      email ||
       email_verified ||
+      gender ||
       kyc_verified)
   ) {
-    UsersService.update(req.body.user_id, updateUserDTO)
+    UsersService.update(req.body.clerk_user_id, updateUserDTO)
       .then((successFlag) =>
         successFlag > 0
           ? res.status(200).json({ message: 'Der Nutzer wurde aktualisiert.' })
