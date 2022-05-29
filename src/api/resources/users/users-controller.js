@@ -36,7 +36,7 @@ const getUserById = (req, res) => {
 const getUserByClerkId = (req, res) => {
   const { clerk_user_id } = req.params;
   const token = req.headers.authorization;
-
+  console.log('req.decodedToken', req.decodedToken);
   console.log('TOKEN', token);
 
   if (clerk_user_id) {
@@ -83,13 +83,36 @@ const getUserByEmail = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  const userDTO = ({ email, phone_number, firstname, lastname, gender, role } = req.body);
+  const userDTO = ({
+    clerk_user_id,
+    firstname,
+    lastname,
+    phone_number,
+    phone_verified,
+    email,
+    email_verified,
+  } = req.body);
 
-  if (email && phone_number && firstname && lastname && gender && role) {
+  console.log('userDTO', userDTO);
+
+  if (
+    clerk_user_id &&
+    firstname &&
+    lastname &&
+    phone_number &&
+    phone_verified &&
+    email &&
+    email_verified
+  ) {
+    userDTO.role = 'user';
+    userDTO.gender = 'unbekannt';
+    userDTO.user_photo = `https://source.boringavatars.com/beam/300/${clerk_user_id}${clerk_user_id}${clerk_user_id}?colors=2f70e9,e76f51,ffc638,f4a261,e97c2f`;
+
     UsersService.add(userDTO)
       .then((newUser) =>
         res.status(201).json({
           user_id: newUser.user_id,
+          clerk_user_id: newUser.clerk_user_id,
           is_active: newUser.is_active,
           email: newUser.email,
           phone_number: newUser.phone_number,
