@@ -1,3 +1,4 @@
+const { contentSecurityPolicy } = require('helmet');
 const AdvertisementsService = require('./advertisements-service');
 
 const getAllAdvertisements = (req, res) =>
@@ -81,14 +82,17 @@ const getAllAdvertisementsByCategoryId = (req, res) => {
 
 const addAdvertisement = (req, res) => {
   const advertisementDTO = ({
-    fk_user_id,
+    clerk_user_id,
     fk_category_id,
+    subcategory_id,
     type,
     title,
     price,
     price_type,
     description,
     verification_image,
+    verification_qr_code,
+    validation_success_token,
     is_verified,
     article_image_1,
     article_image_2,
@@ -108,15 +112,20 @@ const addAdvertisement = (req, res) => {
     location_country,
   } = req.body);
 
+  console.log('BODY2', req.body);
+
   if (
-    fk_user_id &&
+    clerk_user_id &&
     fk_category_id &&
+    subcategory_id &&
     type &&
     title &&
     price &&
     price_type &&
     description &&
     verification_image &&
+    verification_qr_code &&
+    validation_success_token &&
     is_verified &&
     location_street &&
     location_street_number &&
@@ -274,6 +283,63 @@ const deactivateAdvertisement = (req, res) => {
   }
 };
 
+const generateVerificationImage = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    AdvertisementsService.generateVerificationImage(clerk_user_id)
+      .then((token) => res.status(200).json({ token }))
+      .catch((error) => {
+        console.log('Fehler beim Generieren des Verifikations-QR-Codes.', error);
+        return res.status(500).json({
+          message: 'Fehler beim Generieren des Verifikations-QR-Codes.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Generieren des Verifikations-QR-Codes, da Angaben fehlen.',
+    });
+  }
+};
+
+const validateVerificationImage = (req, res) => {
+  const { clerk_user_id } = req.params;
+  const { verification_url, verification_code } = req.body;
+
+  console.log('clerk_user_id HERE', clerk_user_id);
+  console.log('verification_url HERE', verification_url);
+  console.log('verification_code HERE', verification_code);
+
+  if (clerk_user_id && verification_url && verification_code) {
+    AdvertisementsService.validateVerificationImage(
+      clerk_user_id,
+      verification_url,
+      verification_code
+    )
+      .then((validationResponse) =>
+        validationResponse[0] === 'notfound'
+          ? res.status(404).json({ message: 'Der QR-Code konnte nicht gefunden werden.' })
+          : validationResponse[0] === 'invalid'
+          ? res.status(400).json({ message: 'Der QR-Code ist ungültig.' })
+          : res.status(200).json({
+              message: 'Der QR-Code wurde erfolgreich validiert.',
+              decodedtoken: validationResponse[0],
+              validationsuccesstoken: validationResponse[1],
+            })
+      )
+      .catch((error) => {
+        console.log('Fehler beim Validieren des Verifikations-QR-Codes.', error);
+        return res.status(500).json({
+          message: 'Fehler beim Validieren des Verifikations-QR-Codes.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Validieren des Verifikations-QR-Codes, da Angaben fehlen.',
+    });
+  }
+};
+
 module.exports = {
   getAllAdvertisements,
   getAdvertisementById,
@@ -282,4 +348,6 @@ module.exports = {
   addAdvertisement,
   updateAdvertisement,
   deactivateAdvertisement,
+  generateVerificationImage,
+  validateVerificationImage,
 };

@@ -37,8 +37,7 @@ const getAllSubcategoriesByCategoryId = (req, res) => {
   const { category_id } = req.params;
 
   if (category_id) {
-    contactInfosService
-      .findSubcategoriesByCategoryId(category_id)
+    SubcategoriesService.findSubcategoriesByCategoryId(category_id)
       .then((subcategories) => {
         subcategories?.length
           ? res.status(200).json({ subcategories })
@@ -60,9 +59,10 @@ const getAllSubcategoriesByCategoryId = (req, res) => {
 const getAllSubcategoriesByCategoryName = (req, res) => {
   const { category_name } = req.params;
 
+  console.log('category_name', category_name);
+
   if (category_name) {
-    contactInfosService
-      .findSubcategoriesByCategoryName(category_name)
+    SubcategoriesService.findSubcategoriesByCategoryName(category_name)
       .then((subcategories) => {
         subcategories?.length
           ? res.status(200).json({ subcategories })
