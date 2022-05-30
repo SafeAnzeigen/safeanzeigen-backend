@@ -1,3 +1,4 @@
+const { contentSecurityPolicy } = require('helmet');
 const AdvertisementsService = require('./advertisements-service');
 
 const getAllAdvertisements = (req, res) =>
@@ -274,6 +275,53 @@ const deactivateAdvertisement = (req, res) => {
   }
 };
 
+const generateVerificationImage = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    AdvertisementsService.generateVerificationImage(clerk_user_id)
+      .then((token) => res.status(200).json({ token }))
+      .catch((error) => {
+        console.log('Fehler beim Generieren des Verifikations-QR-Codes.', error);
+        return res.status(500).json({
+          message: 'Fehler beim Generieren des Verifikations-QR-Codes.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Generieren des Verifikations-QR-Codes, da Angaben fehlen.',
+    });
+  }
+};
+
+const validateVerificationImage = (req, res) => {
+  const { clerk_user_id } = req.params;
+  const { verification_url, verification_code } = req.body;
+
+  console.log('clerk_user_id HERE', clerk_user_id);
+  console.log('verification_url HERE', verification_url);
+  console.log('verification_code HERE', verification_code);
+
+  if (clerk_user_id && verification_url && verification_code) {
+    AdvertisementsService.validateVerificationImage(
+      clerk_user_id,
+      verification_url,
+      verification_code
+    )
+      .then(() => res.status(200).json({ message: 'Der QR-Code wurde erfolgreich validiert.' }))
+      .catch((error) => {
+        console.log('Fehler beim Validieren des Verifikations-QR-Codes.', error);
+        return res.status(500).json({
+          message: 'Fehler beim Validieren des Verifikations-QR-Codes.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Validieren des Verifikations-QR-Codes, da Angaben fehlen.',
+    });
+  }
+};
+
 module.exports = {
   getAllAdvertisements,
   getAdvertisementById,
@@ -282,4 +330,6 @@ module.exports = {
   addAdvertisement,
   updateAdvertisement,
   deactivateAdvertisement,
+  generateVerificationImage,
+  validateVerificationImage,
 };
