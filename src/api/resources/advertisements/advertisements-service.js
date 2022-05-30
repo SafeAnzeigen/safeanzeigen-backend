@@ -17,12 +17,134 @@ const findById = (advertisement_id) =>
     .first()
     .then((advertisement) => (advertisement ? advertisement : null));
 
+/* TODO: ADD VIEW TO SCHEMA AND TRIGGER ON FRONTEND */
+/*  Contains various checks to provided only necessary data to the outside world */ /* TODO: REDO WITH MULTIPLE JOINS */
+const findPublicById = (advertisement_id) =>
+  new Promise((resolve, reject) => {
+    db('advertisements')
+      .where({ advertisement_id })
+      .first()
+      .then((advertisement) => {
+        if (advertisement) {
+          let category_id = advertisement.fk_category_id;
+
+          db('categories')
+            .where({ category_id })
+            .first()
+            .then((category) => {
+              if (category) {
+                let modifiedAdvertisement = advertisement;
+                modifiedAdvertisement.category_name = category.name;
+
+                db('favorites as f')
+                  .join('advertisements as a', 'a.advertisement_id', 'f.fk_advertisement_id')
+                  .select(
+                    'f.favorite_id',
+                    'f.fk_advertisement_id',
+                    'f.fk_user_id',
+                    'f.created_at',
+                    'f.updated_at',
+                    'a.advertisement_id',
+                    'a.fk_user_id',
+                    'a.fk_category_id',
+                    'a.is_active'
+                  )
+                  .where('f.fk_advertisement_id', advertisement_id)
+                  .then((favoriteArray) => {
+                    if (favoriteArray) {
+                      modifiedAdvertisement.favorite_count = favoriteArray.length;
+                    }
+
+                    if (!modifiedAdvertisement.show_address) {
+                      modifiedAdvertisement.location_city = 'Auf Anfrage';
+                      modifiedAdvertisement.location_country = 'Auf Anfrage';
+                      modifiedAdvertisement.location_county = 'Auf Anfrage';
+                      modifiedAdvertisement.location_street = 'Auf Anfrage';
+                      modifiedAdvertisement.location_street_number = 'Auf Anfrage';
+                      modifiedAdvertisement.location_zip = 'Auf Anfrage';
+                    }
+
+                    let user_id = modifiedAdvertisement.fk_user_id;
+                    db('users')
+                      .where({ user_id })
+                      .first()
+                      .then((user) => {
+                        if (user?.user_id) {
+                          modifiedAdvertisement.register_date = user.created_at;
+                          modifiedAdvertisement.clerk_user_id = user.clerk_user_id;
+                          modifiedAdvertisement.user_photo = user.user_photo;
+
+                          if (!modifiedAdvertisement.show_name) {
+                            modifiedAdvertisement.fullname = 'Auf Anfrage';
+                          } else {
+                            modifiedAdvertisement.fullname = user.firstname + ' ' + user.lastname;
+                          }
+
+                          if (!modifiedAdvertisement.show_phone) {
+                            modifiedAdvertisement.phone_number = 'Auf Anfrage';
+                          } else {
+                            modifiedAdvertisement.phone_number = user.phone_number;
+                          }
+
+                          if (modifiedAdvertisement.subcategory_id) {
+                            let subcategory_id = modifiedAdvertisement.subcategory_id;
+
+                            db('subcategories')
+                              .where({ subcategory_id })
+                              .first()
+                              .then((subcategory) => {
+                                if (subcategory) {
+                                  modifiedAdvertisement.subcategory_name = subcategory?.name;
+                                }
+                                resolve(modifiedAdvertisement);
+                              });
+                          } else {
+                            resolve(modifiedAdvertisement);
+                          }
+                        } else {
+                          resolve(null);
+                        }
+                      });
+                  });
+              } else {
+                resolve(null);
+              }
+            });
+        } else {
+          resolve(null);
+        }
+      });
+  });
+
 const findAdvertisementsByUserId = (fk_user_id) =>
   db('advertisements')
     .where({ fk_user_id })
     .then((advertisements) =>
       advertisements.length > 0 ? advertisements : null
     ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
+
+const findAdvertisementsByClerkUserId = (clerk_user_id) =>
+  new Promise((resolve, reject) => {
+    console.log('clerk_user_id HERE', clerk_user_id);
+    db('users')
+      .where({ clerk_user_id })
+      .first()
+      .then((user) => {
+        console.log('USER FOUND', user);
+        console.log('USERID FOUND', user.user_id);
+        let fk_user_id = user.user_id;
+
+        return db('advertisements')
+          .where({ fk_user_id })
+          .then((advertisements) =>
+            advertisements.length > 0 ? resolve(advertisements) : resolve(null)
+          ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
+      })
+      .catch((error) => {
+        console.log('ERROR FIND ADVERTISEMENTS BY CLERKUSERID', error);
+        reject(error);
+      });
+  });
 
 const findAdvertisementsByCategoryId = (fk_category_id) =>
   db('advertisements')
@@ -121,14 +243,34 @@ const validateVerificationImage = (clerk_user_id, verification_url, verification
       });
   });
 
+/* TODO: This would be better with a database trigger */
+const increaseViewCount = (advertisement_id) =>
+  new Promise((resolve, reject) => {
+    db('advertisements')
+      .where({ advertisement_id })
+      .first()
+      .then((advertisement) => {
+        if (advertisement) {
+          update(advertisement_id, { view_count: advertisement.view_count + 1 }).then(() => {
+            resolve('done');
+          });
+        } else {
+          resolve(null);
+        }
+      });
+  });
+
 module.exports = {
   find,
   findById,
+  findPublicById,
   findAdvertisementsByUserId,
+  findAdvertisementsByClerkUserId,
   findAdvertisementsByCategoryId,
   add,
   update,
   deactivate,
   generateVerificationImage,
   validateVerificationImage,
+  increaseViewCount,
 };

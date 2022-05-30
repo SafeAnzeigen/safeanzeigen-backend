@@ -1,8 +1,7 @@
-const searchesService = require('./searches-service');
+const SearchesService = require('./searches-service');
 
 const getAllSearches = (req, res) =>
-  searchesService
-    .find()
+  SearchesService.find()
     .then((searches) => res.status(200).json({ searches }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Suchebegriffen. ', error);
@@ -15,8 +14,7 @@ const getSearchById = (req, res) => {
   const { search_id } = req.params;
 
   if (search_id) {
-    searchesService
-      .findById(search_id)
+    SearchesService.findById(search_id)
       .then((search) => {
         search
           ? res.status(200).json({ search })
@@ -39,8 +37,7 @@ const getAllSearchesByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
-    searchesService
-      .findSearchesByUserId(user_id)
+    SearchesService.findSearchesByUserId(user_id)
       .then((searches) => {
         searches?.length
           ? res.status(200).json({ searches })
@@ -63,8 +60,7 @@ const getAllSearchesByUserEmail = (req, res) => {
   const { user_email } = req.params;
 
   if (user_email) {
-    searchesService
-      .findSearchesByUserEmail(user_email)
+    SearchesService.findSearchesByUserEmail(user_email)
       .then((searches) => {
         searches?.length
           ? res.status(200).json({ searches })
@@ -87,8 +83,7 @@ const addSearch = (req, res) => {
   const searchDTO = ({ fk_user_id, search_term } = req.body);
 
   if (fk_user_id && search_term) {
-    searchesService
-      .add(searchDTO)
+    SearchesService.add(searchDTO)
       .then((newSearch) =>
         res.status(201).json({
           search_id: newSearch.search_id,
@@ -116,8 +111,7 @@ const deactivateSearch = (req, res) => {
   const { search_id } = req.params;
 
   if (search_id) {
-    searchesService
-      .deactivate(search_id, { is_active: false })
+    SearchesService.deactivate(search_id, { is_active: false })
       .then(() => res.status(200).json({ message: 'Der Suchebegriff wurde deaktiviert.' }))
       .catch((error) => {
         console.log('Fehler beim Deaktivieren des Suchebegriffs. ', error);
