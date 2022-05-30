@@ -31,10 +31,29 @@ const findAdvertisementsByCategoryId = (fk_category_id) =>
       advertisements.length > 0 ? advertisements : null
     ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
 
-const add = (user) =>
-  db('advertisements')
-    .insert(advertisement, 'advertisement_id')
-    .then(([advertisement_id]) => findById(advertisement_id));
+const add = (advertisementDTO) =>
+  new Promise((resolve, reject) => {
+    const { clerk_user_id } = advertisementDTO;
+    db('users')
+      .where({ clerk_user_id })
+      .first()
+      .then((user) => {
+        console.log('USER FOUND', user);
+        console.log('USERID FOUND', user.user_id);
+
+        advertisementDTO.fk_user_id = user.user_id;
+        delete advertisementDTO.clerk_user_id;
+        advertisementDTO.is_published = true;
+
+        return db('advertisements')
+          .insert(advertisementDTO, 'advertisement_id')
+          .then(([advertisement_id]) => resolve(findById(advertisement_id)));
+      })
+      .catch((error) => {
+        console.log('ERROR DURING ADD', error);
+        reject(error);
+      });
+  });
 
 const update = (advertisement_id, changes) =>
   db('advertisements').where({ advertisement_id }).update(changes);
@@ -53,8 +72,6 @@ const generateVerificationImage = (clerk_user_id) =>
 
 const validateVerificationImage = (clerk_user_id, verification_url, verification_code) =>
   new Promise((resolve, reject) => {
-    /* resolve(true); */
-
     const options = {
       url: verification_url,
       dest: './../../src/temp/',
@@ -63,7 +80,6 @@ const validateVerificationImage = (clerk_user_id, verification_url, verification
     download
       .image(options)
       .then(({ filename }) => {
-        console.log('CAN THIS BE RIGHT?', path.basename(filename));
         const jpegData = fs.readFileSync(
           path.resolve(__dirname, '../../../temp/' + path.basename(filename))
         );

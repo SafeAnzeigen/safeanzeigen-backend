@@ -82,14 +82,17 @@ const getAllAdvertisementsByCategoryId = (req, res) => {
 
 const addAdvertisement = (req, res) => {
   const advertisementDTO = ({
-    fk_user_id,
+    clerk_user_id,
     fk_category_id,
+    subcategory_id,
     type,
     title,
     price,
     price_type,
     description,
     verification_image,
+    verification_qr_code,
+    validation_success_token,
     is_verified,
     article_image_1,
     article_image_2,
@@ -109,15 +112,20 @@ const addAdvertisement = (req, res) => {
     location_country,
   } = req.body);
 
+  console.log('BODY2', req.body);
+
   if (
-    fk_user_id &&
+    clerk_user_id &&
     fk_category_id &&
+    subcategory_id &&
     type &&
     title &&
     price &&
     price_type &&
     description &&
     verification_image &&
+    verification_qr_code &&
+    validation_success_token &&
     is_verified &&
     location_street &&
     location_street_number &&
