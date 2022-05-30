@@ -308,7 +308,17 @@ const validateVerificationImage = (req, res) => {
       verification_url,
       verification_code
     )
-      .then(() => res.status(200).json({ message: 'Der QR-Code wurde erfolgreich validiert.' }))
+      .then((validationResponse) =>
+        validationResponse[0] === 'notfound'
+          ? res.status(404).json({ message: 'Der QR-Code konnte nicht gefunden werden.' })
+          : validationResponse[0] === 'invalid'
+          ? res.status(400).json({ message: 'Der QR-Code ist ungültig.' })
+          : res.status(200).json({
+              message: 'Der QR-Code wurde erfolgreich validiert.',
+              decodedtoken: validationResponse[0],
+              validationsuccesstoken: validationResponse[1],
+            })
+      )
       .catch((error) => {
         console.log('Fehler beim Validieren des Verifikations-QR-Codes.', error);
         return res.status(500).json({

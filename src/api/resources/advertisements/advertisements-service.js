@@ -7,6 +7,7 @@ const https = require('https');
 const download = require('image-downloader');
 const db = require('../../../database/db');
 const verificationImageSecret = process.env.VERIFICATION_IMAGE_SECRET;
+const verificationImageSuccessSecret = process.env.VERIFICATION_SUCCESSFUL_SECRET;
 
 const find = () => db('advertisements');
 
@@ -56,38 +57,52 @@ const validateVerificationImage = (clerk_user_id, verification_url, verification
 
     const options = {
       url: verification_url,
-      dest: './../../src/temp/advertisements',
+      dest: './../../src/temp/',
     };
     const path = require('path');
     download
       .image(options)
       .then(({ filename }) => {
+        console.log('CAN THIS BE RIGHT?', path.basename(filename));
         const jpegData = fs.readFileSync(
-          path.resolve(__dirname, '../../../xwvnip5cnkjkwax2iwlf.jpg')
+          path.resolve(__dirname, '../../../temp/' + path.basename(filename))
         );
         const rawImageData = jpeg.decode(jpegData, { useTArray: true });
-        console.log('rawImageData', rawImageData);
-
         const code = jsQR(rawImageData.data, rawImageData.width, rawImageData.height);
+        fs.unlinkSync(path.resolve(__dirname, '../../../temp/' + path.basename(filename)));
 
-        if (code) {
-          console.log('Found QR code', code);
+        if (code?.data) {
+          console.log('QR Code gefunden!', code);
+
+          jsonwebtoken.verify(code?.data, verificationImageSecret, (error, decodedToken) => {
+            if (
+              decodedToken &&
+              decodedToken.clerkuserid === clerk_user_id &&
+              code?.data === verification_code
+            ) {
+              const validationsuccesstoken = jsonwebtoken.sign(
+                { clerkuserid: clerk_user_id },
+                verificationImageSuccessSecret,
+                {
+                  expiresIn: '1h',
+                }
+              );
+              console.log('validationsuccesstoken', validationsuccesstoken);
+              resolve([code?.data, validationsuccesstoken]);
+            }
+            if (error) {
+              console.log('error', error);
+            }
+            resolve(['invalid', '']);
+          });
+        } else {
+          resolve(['notfound', '']);
         }
-
-        resolve(); // saved to /path/to/dest/image.jpg
       })
       .catch((err) => {
         console.error(err);
-        reject();
+        reject(err);
       });
-
-    resolve(true);
-
-    /* const token = jsonwebtoken.sign({ clerkuserid: clerk_user_id }, verificationImageSecret, {
-      expiresIn: '1h',
-    });
-    console.log('token: ', token);
-    token ? resolve(token) : reject(token); */
   });
 
 module.exports = {
