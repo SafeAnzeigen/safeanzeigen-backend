@@ -1,8 +1,7 @@
-const contactInfosService = require('./contact-infos-service');
+const ContactInfosService = require('./contact-infos-service');
 
 const getAllContactInfos = (req, res) =>
-  contactInfosService
-    .find()
+  ContactInfosService.find()
     .then((contactInfos) => res.status(200).json({ contactInfos }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Kontaktinformationen. ', error);
@@ -15,8 +14,7 @@ const getContactInfoById = (req, res) => {
   const { contact_info_id } = req.params;
 
   if (contact_info_id) {
-    contactInfosService
-      .findById(contact_info_id)
+    ContactInfosService.findById(contact_info_id)
       .then((contactInfo) => {
         contactInfo
           ? res.status(200).json({ contactInfo })
@@ -39,8 +37,7 @@ const getAllContactInfosByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
-    contactInfosService
-      .findContactInfoByUserId(user_id)
+    ContactInfosService.findContactInfoByUserId(user_id)
       .then((contactInfos) => {
         contactInfos?.length
           ? res.status(200).json({ contactInfos })
@@ -65,8 +62,7 @@ const getAllContactInfosByUserEmail = (req, res) => {
   const { user_email } = req.params;
 
   if (user_email) {
-    contactInfosService
-      .findContactInfoByUserEmail(user_email)
+    ContactInfosService.findContactInfoByUserEmail(user_email)
       .then((contactInfos) => {
         contactInfos?.length
           ? res.status(200).json({ contactInfos })
@@ -92,8 +88,7 @@ const addContactInfo = (req, res) => {
     req.body);
 
   if (fk_user_id && street && street_number && city && zip && county && country) {
-    contactInfosService
-      .add(contactInfoDTO)
+    ContactInfosService.add(contactInfoDTO)
       .then((newContactInfo) =>
         res.status(201).json({
           contact_info_id: newContactInfo.contact_info_id,
@@ -131,8 +126,7 @@ const updateContactInfo = (req, res) => {
       .contact_info_id /* fk_user_id || */ /* TODO: fk_user_id will be required to auth middleware to check it belongs to user itself but contact_info cannot be updated to another use */ &&
     (street || street_number || city || zip || county || country)
   ) {
-    contactInfosService
-      .update(req.body.contact_info_id, updateContactInfoDTO)
+    ContactInfosService.update(req.body.contact_info_id, updateContactInfoDTO)
       .then((successFlag) =>
         successFlag > 0
           ? res.status(200).json({ message: 'Die Kontaktinformation wurden aktualisiert.' })
@@ -158,8 +152,7 @@ const deactivateContactInfo = (req, res) => {
   const { contact_info_id } = req.params;
 
   if (contact_info_id) {
-    contactInfosService
-      .deactivate(contact_info_id, { is_active: false })
+    ContactInfosService.deactivate(contact_info_id, { is_active: false })
       .then(() => res.status(200).json({ message: 'Die Kontaktinformationen wurde deaktiviert.' }))
       .catch((error) => {
         console.log('Fehler beim Deaktivieren der Kontaktinformationen. ', error);
