@@ -1,8 +1,7 @@
-const favoritesService = require('./favorites-service');
+const FavoritesService = require('./favorites-service');
 
 const getAllFavorites = (req, res) =>
-  favoritesService
-    .find()
+  FavoritesService.find()
     .then((favorites) => res.status(200).json({ favorites }))
     .catch((error) => {
       console.log('Fehler beim Erhalten von allen Favoriten. ', error);
@@ -15,8 +14,7 @@ const getFavoriteById = (req, res) => {
   const { favorite_id } = req.params;
 
   if (favorite_id) {
-    favoritesService
-      .findById(favorite_id)
+    FavoritesService.findById(favorite_id)
       .then((favorite) => {
         favorite
           ? res.status(200).json({ favorite })
@@ -39,7 +37,7 @@ const getFavoriteById = (req, res) => {
   const { user_email } = req.params;
 
   if (user_email) {
-    favoritesService
+    FavoritesService
       .findFavoritesByUserEmail(user_email)
       .then((favorites) => {
         favorites?.length
@@ -63,8 +61,7 @@ const getAllFavoritesByAdvertisementId = (req, res) => {
   const { advertisement_id } = req.params;
 
   if (advertisement_id) {
-    favoritesService
-      .findFavoritesByAdvertisementId(advertisement_id)
+    FavoritesService.findFavoritesByAdvertisementId(advertisement_id)
       .then((favorites) => {
         favorites?.length
           ? res.status(200).json({ favorites })
@@ -87,8 +84,30 @@ const getAllFavoritesByUserId = (req, res) => {
   const { user_id } = req.params;
 
   if (user_id) {
-    favoritesService
-      .findFavoritesByUserId(user_id)
+    FavoritesService.findFavoritesByUserId(user_id)
+      .then((favorites) => {
+        favorites?.length
+          ? res.status(200).json({ favorites })
+          : res.status(404).json({ message: 'Es konnten keine Favoriten gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Favoriten. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Favoriten.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Favoriten, da Angaben fehlen.',
+    });
+  }
+};
+
+const getAllFavoritesByClerkUserId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    FavoritesService.findFavoritesByClerkUserId(clerk_user_id)
       .then((favorites) => {
         favorites?.length
           ? res.status(200).json({ favorites })
@@ -111,8 +130,7 @@ const addFavorite = (req, res) => {
   const favoriteDTO = ({ fk_advertisement_id, fk_user_id } = req.body);
 
   if (fk_advertisement_id && fk_user_id) {
-    favoritesService
-      .add(favoriteDTO)
+    FavoritesService.add(favoriteDTO)
       .then((newFavorite) =>
         res.status(201).json({
           favorite_id: newFavorite.favorite_id,
@@ -139,8 +157,7 @@ const deleteFavorite = (req, res) => {
   const { favorite_id } = req.params;
 
   if (favorite_id) {
-    favoritesService
-      .remove(favorite_id)
+    FavoritesService.remove(favorite_id)
       .then(() => res.status(200).json({ message: 'Der Favoriten wurde gelöscht.' }))
       .catch((error) => {
         console.log('Fehler beim Löschen des Favoriten. ', error);
@@ -161,6 +178,7 @@ module.exports = {
   /* getAllFavoritesByUserEmail, */
   getAllFavoritesByAdvertisementId,
   getAllFavoritesByUserId,
+  getAllFavoritesByClerkUserId,
   addFavorite,
   deleteFavorite,
 };

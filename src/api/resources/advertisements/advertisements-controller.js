@@ -14,6 +14,8 @@ const getAllAdvertisements = (req, res) =>
 const getAdvertisementById = (req, res) => {
   const { advertisement_id } = req.params;
 
+  console.log('Advertisement ID: ', advertisement_id);
+
   if (advertisement_id) {
     AdvertisementsService.findById(advertisement_id)
       .then((advertisement) => {
@@ -34,11 +36,59 @@ const getAdvertisementById = (req, res) => {
   }
 };
 
-const getAllAdvertisementsByUserId = (req, res) => {
-  const { user_id } = req.params;
+const getPublicAdvertisementById = (req, res) => {
+  const { advertisement_id } = req.params;
 
-  if (user_id) {
-    AdvertisementsService.findAdvertisementsByUserId(user_id)
+  console.log('Advertisement ID: ', advertisement_id);
+
+  if (advertisement_id) {
+    AdvertisementsService.findPublicById(advertisement_id)
+      .then((advertisement) => {
+        advertisement
+          ? res.status(200).json({ advertisement })
+          : res.status(404).json({ message: 'Diese Anzeige wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von dieser Anzeige. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von dieser Anzeige.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von dieser Anzeige, da Angaben fehlen.',
+    });
+  }
+};
+
+const getAllAdvertisementsByUserId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    AdvertisementsService.findAdvertisementsByUserId(clerk_user_id)
+      .then((advertisements) => {
+        advertisements?.length
+          ? res.status(200).json({ advertisements })
+          : res.status(404).json({ message: 'Es konnten keine Anzeigen gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Anzeigen. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Anzeigen.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Anzeigen, da Angaben fehlen.',
+    });
+  }
+};
+
+const getAllAdvertisementsByClerkUserId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    AdvertisementsService.findAdvertisementsByClerkUserId(clerk_user_id)
       .then((advertisements) => {
         advertisements?.length
           ? res.status(200).json({ advertisements })
@@ -340,14 +390,41 @@ const validateVerificationImage = (req, res) => {
   }
 };
 
+const increaseViewCount = (req, res) => {
+  const { advertisement_id } = req.params;
+  console.log('RECEIVED advertisement_id', advertisement_id);
+
+  if (advertisement_id) {
+    AdvertisementsService.increaseViewCount(advertisement_id)
+      .then((increaseViewCountResponse) =>
+        increaseViewCountResponse
+          ? res.status(200).json({ message: 'Der ViewCount dieser Anzeige wurde erhöht.' })
+          : res.status(404).json({ message: 'Die Kleinanzeige konnte nicht gefunden werden.' })
+      )
+      .catch((error) => {
+        console.log('Fehler beim Erhöhen der Viewcount.', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhöhen der Viewcount.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhöhen der Viewcount, da Angaben fehlen.',
+    });
+  }
+};
+
 module.exports = {
   getAllAdvertisements,
   getAdvertisementById,
+  getPublicAdvertisementById,
   getAllAdvertisementsByUserId,
+  getAllAdvertisementsByClerkUserId,
   getAllAdvertisementsByCategoryId,
   addAdvertisement,
   updateAdvertisement,
   deactivateAdvertisement,
   generateVerificationImage,
   validateVerificationImage,
+  increaseViewCount,
 };
