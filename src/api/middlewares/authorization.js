@@ -14,8 +14,11 @@ const clerkJWTSignatureKey = [
   process.env.CLERK_JWT_SIGNATURE_PUBLIC_KEY_LINE_9,
 ].join('\n');
 
+const verificationImageSuccessSecret = process.env.VERIFICATION_SUCCESSFUL_SECRET;
+
 module.exports = {
   validateAuthorization,
+  validateValidationSuccessToken,
 };
 
 function validateAuthorization(req, res, next) {
@@ -29,6 +32,29 @@ function validateAuthorization(req, res, next) {
       error
         ? res.status(401).json({ warning: 'Authorization failed. Access denied!', error })
         : ((req.decodedToken = decodedToken), next());
+    }
+  );
+}
+
+function validateValidationSuccessToken(req, res, next) {
+  const { validation_success_token, clerk_user_id } = req.body;
+  jsonwebtoken.verify(
+    validation_success_token,
+    verificationImageSuccessSecret,
+    (error, decodedToken) => {
+      if (error) {
+        console.log('Validation of ValidationSuccessToken failed. Access denied!', error);
+        res
+          .status(401)
+          .json({ warning: 'Validation of ValidationSuccessToken failed. Access denied!' });
+      }
+      if (decodedToken && decodedToken.clerkuserid === clerk_user_id) {
+        next();
+      } else {
+        res
+          .status(400)
+          .json({ warning: 'Validation of ValidationSuccessToken failed. Access denied!', error });
+      }
     }
   );
 }

@@ -13,6 +13,7 @@ router.post(
   '/',
   authorizationMiddleware.validateAuthorization,
   validationMiddleware.clerkUserOwnsThisResource,
+  authorizationMiddleware.validateValidationSuccessToken,
   controller.addAdvertisement
 );
 router.put('/', controller.updateAdvertisement);
