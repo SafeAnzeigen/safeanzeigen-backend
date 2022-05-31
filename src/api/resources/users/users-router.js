@@ -28,4 +28,6 @@ router.put(
 );
 router.delete('/:user_id', controller.deactivateUser);
 
+router.post('/emailkontakt', controller.contactViaEmail);
+
 module.exports = router;
