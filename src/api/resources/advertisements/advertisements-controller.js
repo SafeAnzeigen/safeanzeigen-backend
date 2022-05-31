@@ -133,8 +133,8 @@ const getAllAdvertisementsByCategoryId = (req, res) => {
 const addAdvertisement = (req, res) => {
   const advertisementDTO = ({
     clerk_user_id,
-    fk_category_id,
-    subcategory_id,
+    category_name,
+    subcategory_name,
     type,
     title,
     price,
@@ -166,8 +166,7 @@ const addAdvertisement = (req, res) => {
 
   if (
     clerk_user_id &&
-    fk_category_id &&
-    subcategory_id &&
+    category_name &&
     type &&
     title &&
     price &&
@@ -333,6 +332,30 @@ const deactivateAdvertisement = (req, res) => {
   }
 };
 
+const toggleReservationAdvertisement = (req, res) => {
+  const { advertisement_id } = req.params;
+
+  if (advertisement_id) {
+    AdvertisementsService.toggleReservation(advertisement_id)
+      .then((returnValue) => {
+        console.log('RETURN VALUE', returnValue);
+        returnValue
+          ? res.status(200).json({ message: 'Die Anzeige wurde reserviert.' })
+          : res.status(404).json({ message: 'Die Anzeige konnte nicht gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Reservieren der Anzeige. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Reservieren der Anzeige.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Reservieren der Anzeige, da Angaben fehlen.',
+    });
+  }
+};
+
 const generateVerificationImage = (req, res) => {
   const { clerk_user_id } = req.params;
 
@@ -424,6 +447,7 @@ module.exports = {
   addAdvertisement,
   updateAdvertisement,
   deactivateAdvertisement,
+  toggleReservationAdvertisement,
   generateVerificationImage,
   validateVerificationImage,
   increaseViewCount,

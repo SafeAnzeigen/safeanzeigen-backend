@@ -9,7 +9,12 @@ router.get('/', controller.getAllAdvertisements);
 router.get('/:advertisement_id', controller.getAdvertisementById);
 router.get('/public/:advertisement_id', controller.getPublicAdvertisementById);
 router.get('/userid/:user_id', controller.getAllAdvertisementsByUserId);
-router.get('/clerkuserid/:clerk_user_id', controller.getAllAdvertisementsByClerkUserId);
+router.get(
+  '/clerkuserid/:clerk_user_id',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.getAllAdvertisementsByClerkUserId
+);
 router.get('/categoryid/:category_id', controller.getAllAdvertisementsByCategoryId);
 router.post(
   '/',
@@ -18,8 +23,24 @@ router.post(
   authorizationMiddleware.validateValidationSuccessToken,
   controller.addAdvertisement
 );
-router.put('/', controller.updateAdvertisement);
-router.delete('/:advertisement_id', controller.deactivateAdvertisement);
+router.put(
+  '/',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.updateAdvertisement
+);
+router.post(
+  '/delete/:advertisement_id',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.deactivateAdvertisement
+);
+router.post(
+  '/togglereservation/:advertisement_id',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.toggleReservationAdvertisement
+);
 router.get(
   '/verificationimage/generate/:clerk_user_id',
   authorizationMiddleware.validateAuthorization,
