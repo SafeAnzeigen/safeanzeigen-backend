@@ -23,12 +23,23 @@ router.post(
   authorizationMiddleware.validateValidationSuccessToken,
   controller.addAdvertisement
 );
-router.put('/', controller.updateAdvertisement);
+router.put(
+  '/',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.updateAdvertisement
+);
 router.post(
   '/delete/:advertisement_id',
   authorizationMiddleware.validateAuthorization,
   validationMiddleware.clerkUserOwnsThisResource,
   controller.deactivateAdvertisement
+);
+router.post(
+  '/togglereservation/:advertisement_id',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.toggleReservationAdvertisement
 );
 router.get(
   '/verificationimage/generate/:clerk_user_id',

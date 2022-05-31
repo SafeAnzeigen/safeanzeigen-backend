@@ -106,8 +106,6 @@ const getAllFavoritesByUserId = (req, res) => {
 const getAllFavoritesByClerkUserId = (req, res) => {
   const { clerk_user_id } = req.params;
 
-  console.log('clerk_user_id HERHERE', clerk_user_id);
-
   if (clerk_user_id) {
     FavoritesService.findFavoritesByClerkUserId(clerk_user_id)
       .then((favorites) => {
