@@ -180,13 +180,13 @@ const add = (advertisementDTO) =>
 
               if (advertisementDTO.subcategory_name) {
                 db('subcategories')
-                  .where({ name: advertisementDTO.category_name })
+                  .where({ name: advertisementDTO.subcategory_name })
                   .first()
                   .then((subcategory) => {
                     console.log('FOUND SUBCATEGORY', subcategory);
                     if (subcategory) {
                       advertisementDTO.subcategory_id = subcategory.subcategory_id;
-                      delete advertisementDTO.category_name;
+                      delete advertisementDTO.subcategory_name;
 
                       return db('advertisements')
                         .insert(advertisementDTO, 'advertisement_id')
@@ -196,6 +196,7 @@ const add = (advertisementDTO) =>
                     }
                   });
               } else {
+                delete advertisementDTO.subcategory_name;
                 return db('advertisements')
                   .insert(advertisementDTO, 'advertisement_id')
                   .then(([advertisement_id]) => resolve(findById(advertisement_id)));
