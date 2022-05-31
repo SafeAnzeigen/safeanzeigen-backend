@@ -137,7 +137,9 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
         return db('advertisements')
           .where({ fk_user_id })
           .then((advertisements) =>
-            advertisements.length > 0 ? resolve(advertisements) : resolve(null)
+            advertisements.filter((elem) => elem.is_active).length > 0
+              ? resolve(advertisements.filter((elem) => elem.is_active))
+              : resolve(null)
           ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
       })
       .catch((error) => {

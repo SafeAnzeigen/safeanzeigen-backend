@@ -24,7 +24,12 @@ router.post(
   controller.addAdvertisement
 );
 router.put('/', controller.updateAdvertisement);
-router.delete('/:advertisement_id', controller.deactivateAdvertisement);
+router.post(
+  '/delete/:advertisement_id',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.deactivateAdvertisement
+);
 router.get(
   '/verificationimage/generate/:clerk_user_id',
   authorizationMiddleware.validateAuthorization,

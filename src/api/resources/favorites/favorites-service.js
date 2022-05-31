@@ -51,11 +51,21 @@ const findFavoritesByClerkUserId = (clerk_user_id) =>
         let fk_user_id = user.user_id;
 
         db('favorites as f')
+          .select(
+            'f.favorite_id',
+            'f.fk_advertisement_id',
+            'u.user_id',
+            'u.clerk_user_id',
+            'a.title',
+            'a.price',
+            'a.price_type',
+            'a.article_image_1',
+            'a.is_verified'
+          )
           .join('users as u', 'u.user_id', 'f.fk_user_id')
-          .select('f.favorite_id', 'f.fk_advertisement_id', 'u.user_id', 'u.clerk_user_id')
-          .where('f.fk_user_id', fk_user_id)
+          .join('advertisements as a', 'a.advertisement_id', 'f.fk_advertisement_id')
+          .where('f.fk_user_id', '=', fk_user_id)
           .then((favoritesArray) => {
-            console.log('favoritesArray XOXOX', favoritesArray);
             return resolve(favoritesArray);
           });
       })
