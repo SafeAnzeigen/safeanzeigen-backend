@@ -201,6 +201,28 @@ const deactivateUser = (req, res) => {
   }
 };
 
+const contactViaEmail = (req, res) => {
+  const emailContactDTO = ({ firstname, lastname, email, phone, subject, message } = req.body);
+  if (firstname && lastname && email && phone && subject && message) {
+    UsersService.sendMailContactRequest(emailContactDTO)
+      .then(() =>
+        res.status(200).json({
+          message: 'Kontaktanfrage wurde versandt.',
+        })
+      )
+      .catch((error) => {
+        console.log('Fehler beim Senden der Kontaktanfrage. ', error);
+        return res.status(500).json({
+          message: 'Fehler bei Kontaktanfrage.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Kontaktanfrage konnte nicht versandt werden, da Angaben fehlen.',
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -209,4 +231,5 @@ module.exports = {
   addUser,
   updateUser,
   deactivateUser,
+  contactViaEmail,
 };
