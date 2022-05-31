@@ -206,9 +206,9 @@ const add = (advertisementDTO) =>
             }
           });
 
-        return db('advertisements')
+        /* return db('advertisements')
           .insert(advertisementDTO, 'advertisement_id')
-          .then(([advertisement_id]) => resolve(findById(advertisement_id)));
+          .then(([advertisement_id]) => resolve(findById(advertisement_id))); */
       })
       .catch((error) => {
         console.log('ERROR DURING ADD', error);
