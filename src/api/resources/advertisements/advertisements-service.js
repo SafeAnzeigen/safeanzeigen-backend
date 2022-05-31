@@ -137,7 +137,9 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
         return db('advertisements')
           .where({ fk_user_id })
           .then((advertisements) =>
-            advertisements.length > 0 ? resolve(advertisements) : resolve(null)
+            advertisements.filter((elem) => elem.is_active).length > 0
+              ? resolve(advertisements.filter((elem) => elem.is_active))
+              : resolve(null)
           ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
       })
       .catch((error) => {
@@ -167,6 +169,42 @@ const add = (advertisementDTO) =>
         delete advertisementDTO.clerk_user_id;
         advertisementDTO.is_published = true;
 
+        db('categories')
+          .where({ name: advertisementDTO.category_name })
+          .first()
+          .then((category) => {
+            console.log('FOUND CATEGORY', category);
+            if (category) {
+              advertisementDTO.fk_category_id = category.category_id;
+              delete advertisementDTO.category_name;
+
+              if (advertisementDTO.subcategory_name) {
+                db('subcategories')
+                  .where({ name: advertisementDTO.category_name })
+                  .first()
+                  .then((subcategory) => {
+                    console.log('FOUND SUBCATEGORY', subcategory);
+                    if (subcategory) {
+                      advertisementDTO.subcategory_id = subcategory.subcategory_id;
+                      delete advertisementDTO.category_name;
+
+                      return db('advertisements')
+                        .insert(advertisementDTO, 'advertisement_id')
+                        .then(([advertisement_id]) => resolve(findById(advertisement_id)));
+                    } else {
+                      reject();
+                    }
+                  });
+              } else {
+                return db('advertisements')
+                  .insert(advertisementDTO, 'advertisement_id')
+                  .then(([advertisement_id]) => resolve(findById(advertisement_id)));
+              }
+            } else {
+              reject();
+            }
+          });
+
         return db('advertisements')
           .insert(advertisementDTO, 'advertisement_id')
           .then(([advertisement_id]) => resolve(findById(advertisement_id)));
@@ -182,6 +220,15 @@ const update = (advertisement_id, changes) =>
 
 const deactivate = (advertisement_id, deactivation) =>
   db('advertisements').where({ advertisement_id }).update(deactivation);
+
+const toggleReservation = (advertisement_id) =>
+  findById(advertisement_id).then((advertisement) =>
+    advertisement
+      ? db('advertisements')
+          .where({ advertisement_id })
+          .update({ is_published: !advertisement?.is_published })
+      : null
+  );
 
 const generateVerificationImage = (clerk_user_id) =>
   new Promise((resolve, reject) => {
@@ -270,6 +317,7 @@ module.exports = {
   add,
   update,
   deactivate,
+  toggleReservation,
   generateVerificationImage,
   validateVerificationImage,
   increaseViewCount,

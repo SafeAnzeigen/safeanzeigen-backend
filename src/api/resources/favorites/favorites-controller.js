@@ -127,19 +127,11 @@ const getAllFavoritesByClerkUserId = (req, res) => {
 };
 
 const addFavorite = (req, res) => {
-  const favoriteDTO = ({ fk_advertisement_id, fk_user_id } = req.body);
+  const { fk_advertisement_id, clerk_user_id } = req.body;
 
-  if (fk_advertisement_id && fk_user_id) {
-    FavoritesService.add(favoriteDTO)
-      .then((newFavorite) =>
-        res.status(201).json({
-          favorite_id: newFavorite.favorite_id,
-          fk_advertisement_id: newFavorite.fk_advertisement_id,
-          fk_user_id: newFavorite.fk_user_id,
-          created_at: newFavorite.created_at,
-          updated_at: newFavorite.updated_at,
-        })
-      )
+  if (fk_advertisement_id && clerk_user_id) {
+    FavoritesService.add(fk_advertisement_id, clerk_user_id)
+      .then((newFavoriteArray) => res.status(201).json({ newFavoriteArray }))
       .catch((error) => {
         console.log('Fehler beim Hinzufügen von diesem Favoriten. ', error);
         return res.status(500).json({
@@ -153,12 +145,13 @@ const addFavorite = (req, res) => {
   }
 };
 
-const deleteFavorite = (req, res) => {
-  const { favorite_id } = req.params;
+const deleteFavoriteByAdvertisementIdForUser = (req, res) => {
+  const { advertisement_id } = req.params;
+  const clerk_user_id = req.decodedToken.sub;
 
-  if (favorite_id) {
-    FavoritesService.remove(favorite_id)
-      .then(() => res.status(200).json({ message: 'Der Favoriten wurde gelöscht.' }))
+  if (advertisement_id) {
+    FavoritesService.remove(advertisement_id, clerk_user_id)
+      .then((newFavoriteArray) => res.status(200).json({ newFavoriteArray }))
       .catch((error) => {
         console.log('Fehler beim Löschen des Favoriten. ', error);
         return res.status(500).json({
@@ -180,5 +173,5 @@ module.exports = {
   getAllFavoritesByUserId,
   getAllFavoritesByClerkUserId,
   addFavorite,
-  deleteFavorite,
+  deleteFavoriteByAdvertisementIdForUser,
 };
