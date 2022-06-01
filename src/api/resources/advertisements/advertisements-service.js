@@ -11,20 +11,49 @@ const verificationImageSuccessSecret = process.env.VERIFICATION_SUCCESSFUL_SECRE
 const find = () => db('advertisements');
 
 const findAllPublicAdvertisements = () =>
-  db('advertisements as a')
-    /*     .join("users as u", "u.id", "w.user_id") */
-    .select(
-      'a.advertisement_id',
-      'a.title',
-      'a.price',
-      'a.price_type',
-      'a.is_verified',
-      'a.article_image_1',
-      'a.is_published',
-      'a.created_at'
-    )
-    .where('is_active', true)
-    .andWhere('is_published', true);
+  new Promise((resolve, reject) => {
+    db('advertisements as a')
+      .select(
+        'a.advertisement_id',
+        'a.subcategory_id',
+        'a.title',
+        'a.price',
+        'a.description',
+        'a.price_type',
+        'a.is_verified',
+        'a.article_image_1',
+        'a.is_published',
+        'a.created_at',
+        'c.name as category_name',
+        'a.location_street as locality'
+      )
+      .join('categories as c', 'c.category_id', 'a.fk_category_id')
+      .where('is_active', true)
+      .andWhere('is_published', true)
+      .then((publicAdvertisementsArray) => {
+        if (publicAdvertisementsArray.length > 0) {
+          db('subcategories')
+            .then((subcategoriesArray) => {
+              let publicAdvertisements = publicAdvertisementsArray.map((publicAdvertisement) => {
+                if (publicAdvertisement.subcategory_id) {
+                  let subcategory = subcategoriesArray.find(
+                    (subcategory) =>
+                      subcategory.subcategory_id === publicAdvertisement.subcategory_id
+                  );
+                  publicAdvertisement.subcategory_name = subcategory.name;
+                  return publicAdvertisement;
+                }
+                return publicAdvertisement;
+              });
+              resolve(publicAdvertisements);
+            })
+            .catch((error) => reject(error));
+        } else {
+          resolve(null);
+        }
+      })
+      .catch((error) => reject(error));
+  });
 
 const findById = (advertisement_id) =>
   db('advertisements')

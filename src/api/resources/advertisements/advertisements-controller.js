@@ -13,7 +13,11 @@ const getAllAdvertisements = (req, res) =>
 
 const getAllPublicAdvertisements = (req, res) =>
   AdvertisementsService.findAllPublicAdvertisements()
-    .then((advertisements) => res.status(200).json({ advertisements }))
+    .then((advertisements) =>
+      advertisements
+        ? res.status(200).json({ advertisements })
+        : res.status(404).json({ message: 'Es wurden keine Anzeigen gefunden.' })
+    )
     .catch((error) => {
       console.log('Fehler beim Erhalten von aller öffentlichen Anzeigen. ', error);
       return res.status(500).json({
