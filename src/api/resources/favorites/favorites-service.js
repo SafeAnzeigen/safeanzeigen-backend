@@ -61,7 +61,8 @@ const findFavoritesByClerkUserId = (clerk_user_id) =>
             'a.price_type',
             'a.article_image_1',
             'a.is_verified',
-            'a.is_published'
+            'a.is_published',
+            'f.created_at'
           )
           .join('users as u', 'u.user_id', 'f.fk_user_id')
           .join('advertisements as a', 'a.advertisement_id', 'f.fk_advertisement_id')
