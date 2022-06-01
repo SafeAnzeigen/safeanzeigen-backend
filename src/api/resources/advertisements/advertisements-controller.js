@@ -11,6 +11,16 @@ const getAllAdvertisements = (req, res) =>
       });
     });
 
+const getAllPublicAdvertisements = (req, res) =>
+  AdvertisementsService.findAllPublicAdvertisements()
+    .then((advertisements) => res.status(200).json({ advertisements }))
+    .catch((error) => {
+      console.log('Fehler beim Erhalten von aller öffentlichen Anzeigen. ', error);
+      return res.status(500).json({
+        message: 'Fehler beim Erhalten von aller öffentlichen Anzeigen.',
+      });
+    });
+
 const getAdvertisementById = (req, res) => {
   const { advertisement_id } = req.params;
 
@@ -439,6 +449,7 @@ const increaseViewCount = (req, res) => {
 
 module.exports = {
   getAllAdvertisements,
+  getAllPublicAdvertisements,
   getAdvertisementById,
   getPublicAdvertisementById,
   getAllAdvertisementsByUserId,

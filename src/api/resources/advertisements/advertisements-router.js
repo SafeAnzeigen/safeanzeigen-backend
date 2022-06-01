@@ -6,6 +6,7 @@ const validationMiddleware = require('../../middlewares/validation');
 const controller = require('./advertisements-controller');
 
 router.get('/', controller.getAllAdvertisements);
+router.get('/public/', controller.getAllPublicAdvertisements);
 router.get('/:advertisement_id', controller.getAdvertisementById);
 router.get('/public/:advertisement_id', controller.getPublicAdvertisementById);
 router.get('/userid/:user_id', controller.getAllAdvertisementsByUserId);

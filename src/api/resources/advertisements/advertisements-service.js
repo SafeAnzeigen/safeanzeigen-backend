@@ -3,13 +3,28 @@ const jsonwebtoken = require('jsonwebtoken');
 const jsQR = require('jsqr');
 const jpeg = require('jpeg-js');
 const fs = require('fs');
-const https = require('https');
 const download = require('image-downloader');
 const db = require('../../../database/db');
 const verificationImageSecret = process.env.VERIFICATION_IMAGE_SECRET;
 const verificationImageSuccessSecret = process.env.VERIFICATION_SUCCESSFUL_SECRET;
 
 const find = () => db('advertisements');
+
+const findAllPublicAdvertisements = () =>
+  db('advertisements as a')
+    /*     .join("users as u", "u.id", "w.user_id") */
+    .select(
+      'a.advertisement_id',
+      'a.title',
+      'a.price',
+      'a.price_type',
+      'a.is_verified',
+      'a.article_image_1',
+      'a.is_published',
+      'a.created_at'
+    )
+    .where('is_active', true)
+    .andWhere('is_published', true);
 
 const findById = (advertisement_id) =>
   db('advertisements')
@@ -310,6 +325,7 @@ const increaseViewCount = (advertisement_id) =>
 
 module.exports = {
   find,
+  findAllPublicAdvertisements,
   findById,
   findPublicById,
   findAdvertisementsByUserId,
