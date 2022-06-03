@@ -20,18 +20,19 @@ io.on('connection', (socket) => {
   socket.join(roomId);
 
   socket.on('message', (messageObject) => {
-    console.log('messageObject', messageObject);
+    console.log('messageObject ', messageObject);
     console.log('socket', socket.id);
     io.in(roomId).emit('receive-message', messageObject);
-    /* io.emit('receive-message', messageObject); */
   });
 
-  socket.on('join', (messageObject) => {
-    console.log('joinObject', messageObject);
+  socket.on('is-typing', (isTypingObject) => {
+    console.log('isTypingObject ', isTypingObject);
+    io.in(roomId).emit('receive-is-typing', isTypingObject);
   });
 
-  socket.on('is-typing', ({ isTypingObject }) => {
-    console.log('isTypingObject', isTypingObject);
+  socket.on('stopped-typing', (stoppedTypingObject) => {
+    console.log('stoppedTypingObject ', stoppedTypingObject);
+    io.in(roomId).emit('receive-stopped-typing', stoppedTypingObject);
   });
 });
 
