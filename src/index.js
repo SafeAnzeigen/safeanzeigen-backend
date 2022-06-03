@@ -13,15 +13,17 @@ const server2 = require('http').createServer(server);
 const io = require('socket.io')(server2, { cors: { origin: whitelist } });
 
 io.on('connection', (socket) => {
-  /* const id = socket.handshake.query.id;
-  console.log('handshake connection for ad conversation room', socket.handshake.query.id);
-  socket.join(id); */
+  console.log('socket', socket.id);
+  const roomId = socket.handshake.query.id;
+  console.log('handshake connection for ad conversation room', roomId);
+
+  socket.join(roomId);
 
   socket.on('message', (messageObject) => {
     console.log('messageObject', messageObject);
     console.log('socket', socket.id);
-    /*  socket.to(id).emit('receive-message', messageObject); */
-    io.emit('receive-message', messageObject);
+    io.in(roomId).emit('receive-message', messageObject);
+    /* io.emit('receive-message', messageObject); */
   });
 
   socket.on('join', (messageObject) => {
