@@ -14,7 +14,7 @@ const io = require('socket.io')(server2, { cors: { origin: whitelist } });
 
 io.on('connection', (socket) => {
   const id = socket.handshake.query.id;
-  console.log('handshake connection from clerk user', socket.handshake.query.id);
+  console.log('handshake connection for ad conversation room', socket.handshake.query.id);
   socket.join(id);
 
   socket.on('message', (messageObject) => {
