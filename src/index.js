@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
   socket.on('message', (messageObject) => {
     console.log('messageObject', messageObject);
     /*  socket.to(id).emit('receive-message', messageObject); */
-    socket.emit('receive-message', messageObject);
+    io.emit('receive-message', messageObject);
   });
 
   socket.on('join', (messageObject) => {
