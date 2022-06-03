@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
 
   socket.on('message', (messageObject) => {
     console.log('messageObject', messageObject);
+    console.log('socket', socket.id);
     /*  socket.to(id).emit('receive-message', messageObject); */
     io.emit('receive-message', messageObject);
   });
