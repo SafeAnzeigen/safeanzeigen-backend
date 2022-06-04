@@ -254,11 +254,14 @@ const getUserHasChatNotification = (req, res) => {
 
   if (clerk_user_id) {
     UsersService.getUserHasChatNotification(clerk_user_id)
-      .then((foundFlag) =>
-        foundFlag
-          ? res.status(200).json({ message: 'Es gibt neue Chatnachrichten.' })
-          : res.status(404).json({ message: 'Es gibt keine neuen Chatnachrichten.' })
-      )
+      .then((foundMessagesBeforeVisit) => {
+        console.log('foundMessagesBeforeVisit', foundMessagesBeforeVisit);
+        if (foundMessagesBeforeVisit?.length) {
+          res.status(200).json({ message: 'Es gibt neue Chatnachrichten.' });
+        } else {
+          res.status(404).json({ message: 'Es gibt keine neuen Chatnachrichten.' });
+        }
+      })
       .catch((error) => {
         console.log('Fehler beim Prüfen nach neuen Chatnachrichten. ', error);
         return res.status(500).json({
