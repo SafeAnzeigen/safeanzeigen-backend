@@ -1,3 +1,5 @@
+var getUnixTime = require('date-fns/getUnixTime');
+
 const UsersService = require('./users-service');
 
 const getAllUsers = (req, res) =>
@@ -223,6 +225,53 @@ const contactViaEmail = (req, res) => {
   }
 };
 
+const setUserVisitedChat = (req, res) => {
+  const { clerk_user_id } = req.params;
+  let user_visited_chat_timestamp = getUnixTime(new Date());
+
+  if (clerk_user_id && user_visited_chat_timestamp) {
+    UsersService.update(clerk_user_id, { user_visited_chat_timestamp })
+      .then(() =>
+        res.status(200).json({
+          message: 'Zeitstempel hinzugefügt.',
+        })
+      )
+      .catch((error) => {
+        console.log('Fehler beim Hinzufügen des Zeitstempels. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Hinzufügen des Zeitstempels.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Hinzufügen des Zeitstempels, da Angaben fehlen.',
+    });
+  }
+};
+
+const getUserHasChatNotification = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    UsersService.getUserHasChatNotification(clerk_user_id)
+      .then((foundFlag) =>
+        foundFlag
+          ? res.status(200).json({ message: 'Es gibt neue Chatnachrichten.' })
+          : res.status(404).json({ message: 'Es gibt keine neuen Chatnachrichten.' })
+      )
+      .catch((error) => {
+        console.log('Fehler beim Prüfen nach neuen Chatnachrichten. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Prüfen nach neuen Chatnachrichten.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Prüfen nach neuen Chatnachrichten, da Angaben fehlen.',
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -232,4 +281,6 @@ module.exports = {
   updateUser,
   deactivateUser,
   contactViaEmail,
+  setUserVisitedChat,
+  getUserHasChatNotification,
 };
