@@ -107,7 +107,7 @@ const add = (fk_advertisement_id, clerk_user_id) =>
 const remove = (advertisement_id, clerk_user_id) =>
   new Promise((resolve, reject) =>
     findFavoritesByClerkUserId(clerk_user_id).then((favoriteArray) => {
-      if (favoriteArray.length > 0) {
+      if (favoriteArray.length) {
         let selectedFavorite = favoriteArray.filter(
           (element) => element?.fk_advertisement_id === advertisement_id
         );
@@ -115,7 +115,7 @@ const remove = (advertisement_id, clerk_user_id) =>
         console.log('GOT THIS ', favoriteArray[0]);
         console.log('DELETING THIS NOW', selectedFavorite);
 
-        if (selectedFavorite.length > 0) {
+        if (selectedFavorite.length) {
           db('favorites')
             .where('favorite_id', selectedFavorite[0].favorite_id)
             .del()
