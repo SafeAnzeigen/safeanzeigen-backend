@@ -11,6 +11,7 @@ const server = require('./server');
 const db = require('./database/db');
 const server2 = require('http').createServer(server);
 const io = require('socket.io')(server2, { cors: { origin: whitelist } });
+const MessageService = require('./api/resources/messages/messages-service.js');
 
 io.on('connection', (socket) => {
   console.log('socket', socket.id);
@@ -19,10 +20,18 @@ io.on('connection', (socket) => {
 
   socket.join(roomId);
 
+  socket.on('exit', () => {
+    console.log('exit of ', roomId);
+    socket.leave(roomId);
+  });
+
   socket.on('message', (messageObject) => {
     console.log('messageObject ', messageObject);
     console.log('socket', socket.id);
-    io.in(roomId).emit('receive-message', messageObject);
+    MessageService.add(messageObject).then((newMessage) => {
+      console.log('persisted as newMessage ', newMessage);
+      io.in(roomId).emit('receive-message', messageObject);
+    });
   });
 
   socket.on('is-typing', (isTypingObject) => {
