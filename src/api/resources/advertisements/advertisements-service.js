@@ -31,7 +31,7 @@ const findAllPublicAdvertisements = () =>
       .where('is_active', true)
       .andWhere('is_published', true)
       .then((publicAdvertisementsArray) => {
-        if (publicAdvertisementsArray.length > 0) {
+        if (publicAdvertisementsArray.length) {
           db('subcategories')
             .then((subcategoriesArray) => {
               let publicAdvertisements = publicAdvertisementsArray.map((publicAdvertisement) => {
@@ -164,7 +164,7 @@ const findAdvertisementsByUserId = (fk_user_id) =>
   db('advertisements')
     .where({ fk_user_id })
     .then((advertisements) =>
-      advertisements.length > 0 ? advertisements : null
+      advertisements.length ? advertisements : null
     ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
 
 const findAdvertisementsByClerkUserId = (clerk_user_id) =>
@@ -181,7 +181,7 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
         return db('advertisements')
           .where({ fk_user_id })
           .then((advertisements) =>
-            advertisements.filter((elem) => elem.is_active).length > 0
+            advertisements.filter((elem) => elem.is_active).length
               ? resolve(advertisements.filter((elem) => elem.is_active))
               : resolve(null)
           ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
@@ -196,7 +196,7 @@ const findAdvertisementsByCategoryId = (fk_category_id) =>
   db('advertisements')
     .where({ fk_category_id })
     .then((advertisements) =>
-      advertisements.length > 0 ? advertisements : null
+      advertisements.length ? advertisements : null
     ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
 
 const add = (advertisementDTO) =>
