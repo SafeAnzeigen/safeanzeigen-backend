@@ -107,13 +107,17 @@ const getUserHasChatNotification = (clerk_user_id) =>
                     .then((messages) => {
                       if (messages.length) {
                         console.log('I HAVE FOUND MESSAGES', messages);
+                        console.log(
+                          'I HAVE userLastCheckedChatTimestamp',
+                          userLastCheckedChatTimestamp
+                        );
                         resolve(
                           messages.filter((messageElement) =>
                             isBefore(
-                              fromUnixTime(messageElement.message_sent_timestamp),
-                              fromUnixTime(userLastCheckedChatTimestamp)
+                              fromUnixTime(userLastCheckedChatTimestamp.toString()),
+                              fromUnixTime(messageElement.message_sent_timestamp.toString())
                             )
-                          )?.length
+                          )
                         );
                       } else {
                         resolve(null);
