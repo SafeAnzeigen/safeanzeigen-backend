@@ -44,6 +44,8 @@ const FavoritesRouter = require('./api/resources/favorites/favorites-router');
 const SearchesRouter = require('./api/resources/searches/searches-router');
 const SubcategoriesRouter = require('./api/resources/subcategories/subcategories-router');
 const UsersRouter = require('./api/resources/users/users-router');
+const ChatsRouter = require('./api/resources/chats/chats-router');
+const MessagesRouter = require('./api/resources/messages/messages-router');
 
 server.use('/v1/advertisements', AdvertisementsRouter);
 server.use('/v1/categories', CategoriesRouter);
@@ -52,5 +54,7 @@ server.use('/v1/contact-infos', ContactInfosRouter);
 server.use('/v1/searches', SearchesRouter);
 server.use('/v1/subcategories', SubcategoriesRouter);
 server.use('/v1/users', UsersRouter);
+server.use('/v1/chats', ChatsRouter);
+server.use('/v1/messages', MessagesRouter);
 
 module.exports = server;
