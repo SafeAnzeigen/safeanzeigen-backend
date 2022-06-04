@@ -60,7 +60,10 @@ const add = (chatDTO) =>
     .then(([ad_conversation_room_id]) => findByRoomId(ad_conversation_room_id));
 
 const remove = (ad_conversation_room_id) =>
-  db('chats').where('ad_conversation_room_id', ad_conversation_room_id).del();
+  db('chats')
+    .where('ad_conversation_room_id', ad_conversation_room_id)
+    .del()
+    .then(() => db('messages').where('ad_conversation_room_id', ad_conversation_room_id).del());
 
 module.exports = {
   findChatsByClerkUserId,
