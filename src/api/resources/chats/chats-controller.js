@@ -99,16 +99,18 @@ const deleteChatByRoomId = (req, res) => {
 
   if (ad_conversation_room_id) {
     ChatsService.remove(ad_conversation_room_id)
-      .then(() => res.status(200).json({ message: 'Dieser Chat wurde gelöscht.' }))
+      .then(() =>
+        res.status(200).json({ message: 'Dieser Chat und alle Nachrichten wurden gelöscht.' })
+      )
       .catch((error) => {
-        console.log('Fehler beim Löschen des Chats. ', error);
+        console.log('Fehler beim Löschen des Chats und aller Nachrichten. ', error);
         return res.status(500).json({
-          message: 'Fehler beim Löschen des Chats.',
+          message: 'Fehler beim Löschen des Chats und aller Nachrichten.',
         });
       });
   } else {
     return res.status(400).json({
-      message: 'Fehler beim Löschen des Chats, da Angaben fehlen.',
+      message: 'Fehler beim Löschen des Chats und aller Nachrichten, da Angaben fehlen.',
     });
   }
 };
