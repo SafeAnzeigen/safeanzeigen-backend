@@ -1,7 +1,11 @@
 const nodemailer = require('nodemailer');
 const format = require('date-fns/format');
+const isBefore = require('date-fns/isBefore');
+const fromUnixTime = require('date-fns/fromUnixTime');
 
 const db = require('../../../database/db');
+const ChatService = require('../chats/chats-service');
+
 const safeanzeigenTransporter = nodemailer.createTransport({
   host: process.env.EMAIL_SERVER_HOST,
   port: process.env.EMAIL_SERVER_PORT,
@@ -66,6 +70,92 @@ const sendMailContactRequest = async (emailContactDTO) =>
       .catch((error) => reject(error));
   });
 
+const getUserHasChatNotification = (clerk_user_id) =>
+  new Promise((resolve, reject) => {
+    getUserByClerkId(clerk_user_id).then((foundUser) => {
+      if (foundUser) {
+        if (foundUser.user_visited_chat_timestamp) {
+          let tempUserChatsArray = [];
+          let userLastCheckedChatTimestamp = foundUser.user_visited_chat_timestamp;
+
+          ChatService.findChatsByClerkUserOwnsAd(clerk_user_id).then((chats) => {
+            console.log('NOTIFICATION CHATS OWNED BY USER', chats);
+            if (chats?.length) {
+              tempUserChatsArray = tempUserChatsArray.concat(chats);
+            }
+            ChatService.findChatsByClerkUserId(clerk_user_id)
+              .then((chats) => {
+                console.log('NOTIFICATION CHATS BUY AS USER', chats);
+                if (chats?.length) {
+                  tempUserChatsArray = tempUserChatsArray.concat(chats);
+                }
+
+                if (tempUserChatsArray.length) {
+                  console.log('I HAVE FOUND CONVERSATIONS', tempUserChatsArray);
+
+                  let tempRelevantAdConversationRoomIdArray = tempUserChatsArray.map(
+                    (element) => element?.ad_conversation_room_id
+                  );
+
+                  console.log(
+                    'I HAVE FOUND tempRelevantAdConversationRoomIdArray',
+                    tempRelevantAdConversationRoomIdArray
+                  );
+
+                  db('messages')
+                    .whereIn('ad_conversation_room_id', tempRelevantAdConversationRoomIdArray)
+                    .then((messages) => {
+                      if (messages.length) {
+                        console.log('I HAVE FOUND MESSAGES', messages);
+                        resolve(
+                          messages.filter((messageElement) =>
+                            isBefore(
+                              fromUnixTime(messageElement.message_sent_timestamp),
+                              fromUnixTime(userLastCheckedChatTimestamp)
+                            )
+                          )?.length
+                        );
+                      } else {
+                        resolve(null);
+                      }
+                    })
+                    .catch((error) => {
+                      console.log('ERROR NOTIFICATION FETCHING MESSAGES', error);
+                      reject(error);
+                    });
+                } else {
+                  console.log('USER HAS NOT CHATS');
+                  resolve(null);
+                }
+              })
+              .catch((error) => {
+                console.log('ERROR NOTIFICATION CHATS BUY AS USER', error);
+                reject(error);
+              })
+              .catch((error) => {
+                console.log('ERROR NOTIFICATION CHATS OWNED BY USER', error);
+                reject(error);
+              });
+          });
+        } else {
+          console.log('USER HAS NO TIMESTAMP FOR CHAT NOTIFICATION');
+          resolve(null);
+        }
+      } else {
+        console.log('USER NOT FOUND FOR CHAT NOTIFICATION');
+        resolve(null);
+      }
+    });
+  });
+
+// GET ALL CHATROOM WHERE CLERK_USER_ID IS OWNER
+// GET ALL CHATROOM WHERE CLERK_USER_ID IS BUYER
+// GET ALL MESSAGES THAT ARE IN THESE CHATROOMS
+// CHECK IF ANY MESSAGE IS YOUNGER THAN LAST VISITED CHAT TIMESTAMP
+//RETURN TRUE
+//ELSE
+//RETURN FALSE
+
 module.exports = {
   find,
   findById,
@@ -75,4 +165,5 @@ module.exports = {
   update,
   deactivate,
   sendMailContactRequest,
+  getUserHasChatNotification,
 };

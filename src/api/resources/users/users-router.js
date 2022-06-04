@@ -30,4 +30,16 @@ router.delete('/:user_id', controller.deactivateUser);
 
 router.post('/emailkontakt', controller.contactViaEmail);
 
+router.get(
+  '/visitedchat/:clerk_user_id',
+  authorizationMiddleware.validateAuthorization,
+  controller.setUserVisitedChat
+);
+
+router.get(
+  '/checknotifcations/:clerk_user_id',
+  authorizationMiddleware.validateAuthorization,
+  controller.getUserHasChatNotification
+);
+
 module.exports = router;
