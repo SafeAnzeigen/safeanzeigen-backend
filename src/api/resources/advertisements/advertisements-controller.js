@@ -1,4 +1,3 @@
-const { contentSecurityPolicy } = require('helmet');
 const AdvertisementsService = require('./advertisements-service');
 
 const getAllAdvertisements = (req, res) =>
@@ -52,8 +51,6 @@ const getAdvertisementById = (req, res) => {
 
 const getPublicAdvertisementById = (req, res) => {
   const { advertisement_id } = req.params;
-
-  console.log('Advertisement ID: ', advertisement_id);
 
   if (advertisement_id) {
     AdvertisementsService.findPublicById(advertisement_id)
@@ -393,10 +390,6 @@ const validateVerificationImage = (req, res) => {
   const { clerk_user_id } = req.params;
   const { verification_url, verification_code } = req.body;
 
-  console.log('clerk_user_id HERE', clerk_user_id);
-  console.log('verification_url HERE', verification_url);
-  console.log('verification_code HERE', verification_code);
-
   if (clerk_user_id && verification_url && verification_code) {
     AdvertisementsService.validateVerificationImage(
       clerk_user_id,
@@ -429,7 +422,6 @@ const validateVerificationImage = (req, res) => {
 
 const increaseViewCount = (req, res) => {
   const { advertisement_id } = req.params;
-  console.log('RECEIVED advertisement_id', advertisement_id);
 
   if (advertisement_id) {
     AdvertisementsService.increaseViewCount(advertisement_id)

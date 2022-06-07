@@ -61,8 +61,6 @@ const findById = (advertisement_id) =>
     .first()
     .then((advertisement) => (advertisement ? advertisement : null));
 
-/* TODO: ADD VIEW TO SCHEMA AND TRIGGER ON FRONTEND */
-/*  Contains various checks to provided only necessary data to the outside world */ /* TODO: REDO WITH MULTIPLE JOINS */
 const findPublicById = (advertisement_id) =>
   new Promise((resolve, reject) => {
     db('advertisements')
@@ -163,19 +161,14 @@ const findPublicById = (advertisement_id) =>
 const findAdvertisementsByUserId = (fk_user_id) =>
   db('advertisements')
     .where({ fk_user_id })
-    .then((advertisements) =>
-      advertisements.length ? advertisements : null
-    ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
+    .then((advertisements) => (advertisements.length ? advertisements : null));
 
 const findAdvertisementsByClerkUserId = (clerk_user_id) =>
   new Promise((resolve, reject) => {
-    console.log('clerk_user_id HERE', clerk_user_id);
     db('users')
       .where({ clerk_user_id })
       .first()
       .then((user) => {
-        console.log('USER FOUND', user);
-        console.log('USERID FOUND', user.user_id);
         let fk_user_id = user.user_id;
 
         return db('advertisements')
@@ -184,7 +177,7 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
             advertisements.filter((elem) => elem.is_active).length
               ? resolve(advertisements.filter((elem) => elem.is_active))
               : resolve(null)
-          ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
+          );
       })
       .catch((error) => {
         console.log('ERROR FIND ADVERTISEMENTS BY CLERKUSERID', error);
@@ -195,9 +188,7 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
 const findAdvertisementsByCategoryId = (fk_category_id) =>
   db('advertisements')
     .where({ fk_category_id })
-    .then((advertisements) =>
-      advertisements.length ? advertisements : null
-    ); /* TODO: TEST WHAT IS RETURNED FOR NOTHING; SINGLE; AND MANY */
+    .then((advertisements) => (advertisements.length ? advertisements : null));
 
 const add = (advertisementDTO) =>
   new Promise((resolve, reject) => {
@@ -206,9 +197,6 @@ const add = (advertisementDTO) =>
       .where({ clerk_user_id })
       .first()
       .then((user) => {
-        console.log('USER FOUND', user);
-        console.log('USERID FOUND', user.user_id);
-
         advertisementDTO.fk_user_id = user.user_id;
         delete advertisementDTO.clerk_user_id;
         advertisementDTO.is_published = true;
@@ -217,7 +205,6 @@ const add = (advertisementDTO) =>
           .where({ name: advertisementDTO.category_name })
           .first()
           .then((category) => {
-            console.log('FOUND CATEGORY', category);
             if (category) {
               advertisementDTO.fk_category_id = category.category_id;
               delete advertisementDTO.category_name;
@@ -227,7 +214,6 @@ const add = (advertisementDTO) =>
                   .where({ name: advertisementDTO.subcategory_name })
                   .first()
                   .then((subcategory) => {
-                    console.log('FOUND SUBCATEGORY', subcategory);
                     if (subcategory) {
                       advertisementDTO.subcategory_id = subcategory.subcategory_id;
                       delete advertisementDTO.subcategory_name;
@@ -249,10 +235,6 @@ const add = (advertisementDTO) =>
               reject();
             }
           });
-
-        /* return db('advertisements')
-          .insert(advertisementDTO, 'advertisement_id')
-          .then(([advertisement_id]) => resolve(findById(advertisement_id))); */
       })
       .catch((error) => {
         console.log('ERROR DURING ADD', error);
@@ -302,8 +284,6 @@ const validateVerificationImage = (clerk_user_id, verification_url, verification
         fs.unlinkSync(path.resolve(__dirname, '../../../temp/' + path.basename(filename)));
 
         if (code?.data) {
-          console.log('QR Code gefunden!', code);
-
           jsonwebtoken.verify(code?.data, verificationImageSecret, (error, decodedToken) => {
             if (
               decodedToken &&
@@ -317,7 +297,6 @@ const validateVerificationImage = (clerk_user_id, verification_url, verification
                   expiresIn: '1h',
                 }
               );
-              console.log('validationsuccesstoken', validationsuccesstoken);
               resolve([code?.data, validationsuccesstoken]);
             }
             if (error) {

@@ -33,30 +33,6 @@ const getFavoriteById = (req, res) => {
   }
 };
 
-/* const getAllFavoritesByUserEmail = async (req, res) => {
-  const { user_email } = req.params;
-
-  if (user_email) {
-    FavoritesService
-      .findFavoritesByUserEmail(user_email)
-      .then((favorites) => {
-        favorites?.length
-          ? res.status(200).json({ favorites })
-          : res.status(404).json({ message: 'Es konnten keine Favoriten gefunden werden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von Favoriten. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von Favoriten.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von Favoriten, da Angaben fehlen.',
-    });
-  }
-}; */
-
 const getAllFavoritesByAdvertisementId = (req, res) => {
   const { advertisement_id } = req.params;
 
@@ -168,7 +144,6 @@ const deleteFavoriteByAdvertisementIdForUser = (req, res) => {
 module.exports = {
   getAllFavorites,
   getFavoriteById,
-  /* getAllFavoritesByUserEmail, */
   getAllFavoritesByAdvertisementId,
   getAllFavoritesByUserId,
   getAllFavoritesByClerkUserId,
