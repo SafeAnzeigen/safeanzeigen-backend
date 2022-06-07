@@ -98,12 +98,6 @@ const add = (fk_advertisement_id, clerk_user_id) =>
       })
   );
 
-/* const remove = (favorite_id) => db('favorites').where({ favorite_id }).del(); */
-/* const remove = (favorite_id) =>
-  db('favorites').del().where({
-    favorite_id: favorite_id,
-  }); */
-
 const remove = (advertisement_id, clerk_user_id) =>
   new Promise((resolve, reject) =>
     findFavoritesByClerkUserId(clerk_user_id).then((favoriteArray) => {
@@ -134,7 +128,6 @@ const remove = (advertisement_id, clerk_user_id) =>
 module.exports = {
   find,
   findById,
-  /* findFavoritesByUserEmail, */
   findFavoritesByAdvertisementId,
   findFavoritesByUserId,
   findFavoritesByClerkUserId,

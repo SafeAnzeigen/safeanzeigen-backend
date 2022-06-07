@@ -79,38 +79,24 @@ const getUserHasChatNotification = (clerk_user_id) =>
           let userLastCheckedChatTimestamp = foundUser.user_visited_chat_timestamp;
 
           ChatService.findChatsByClerkUserOwnsAd(clerk_user_id).then((chats) => {
-            console.log('NOTIFICATION CHATS OWNED BY USER', chats);
             if (chats?.length) {
               tempUserChatsArray = tempUserChatsArray.concat(chats);
             }
             ChatService.findChatsByClerkUserId(clerk_user_id)
               .then((chats) => {
-                console.log('NOTIFICATION CHATS BUY AS USER', chats);
                 if (chats?.length) {
                   tempUserChatsArray = tempUserChatsArray.concat(chats);
                 }
 
                 if (tempUserChatsArray.length) {
-                  console.log('I HAVE FOUND CONVERSATIONS', tempUserChatsArray);
-
                   let tempRelevantAdConversationRoomIdArray = tempUserChatsArray.map(
                     (element) => element?.ad_conversation_room_id
-                  );
-
-                  console.log(
-                    'I HAVE FOUND tempRelevantAdConversationRoomIdArray',
-                    tempRelevantAdConversationRoomIdArray
                   );
 
                   db('messages')
                     .whereIn('ad_conversation_room_id', tempRelevantAdConversationRoomIdArray)
                     .then((messages) => {
                       if (messages.length) {
-                        console.log('I HAVE FOUND MESSAGES', messages);
-                        console.log(
-                          'I HAVE userLastCheckedChatTimestamp',
-                          userLastCheckedChatTimestamp
-                        );
                         resolve(
                           messages.filter((messageElement) =>
                             isBefore(
@@ -128,7 +114,7 @@ const getUserHasChatNotification = (clerk_user_id) =>
                       reject(error);
                     });
                 } else {
-                  console.log('USER HAS NOT CHATS');
+                  console.log('USER HAS NO CHATS');
                   resolve(null);
                 }
               })
@@ -151,14 +137,6 @@ const getUserHasChatNotification = (clerk_user_id) =>
       }
     });
   });
-
-// GET ALL CHATROOM WHERE CLERK_USER_ID IS OWNER
-// GET ALL CHATROOM WHERE CLERK_USER_ID IS BUYER
-// GET ALL MESSAGES THAT ARE IN THESE CHATROOMS
-// CHECK IF ANY MESSAGE IS YOUNGER THAN LAST VISITED CHAT TIMESTAMP
-//RETURN TRUE
-//ELSE
-//RETURN FALSE
 
 module.exports = {
   find,
