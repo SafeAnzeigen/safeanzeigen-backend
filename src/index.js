@@ -21,26 +21,20 @@ io.on('connection', (socket) => {
   socket.join(roomId);
 
   socket.on('exit', () => {
-    console.log('exit of ', roomId);
     socket.leave(roomId);
   });
 
   socket.on('message', (messageObject) => {
-    console.log('messageObject ', messageObject);
-    console.log('socket', socket.id);
-    MessageService.add(messageObject).then((newMessage) => {
-      console.log('persisted as newMessage ', newMessage);
+    MessageService.add(messageObject).then(() => {
       io.in(roomId).emit('receive-message', messageObject);
     });
   });
 
   socket.on('is-typing', (isTypingObject) => {
-    console.log('isTypingObject ', isTypingObject);
     io.in(roomId).emit('receive-is-typing', isTypingObject);
   });
 
   socket.on('stopped-typing', (stoppedTypingObject) => {
-    console.log('stoppedTypingObject ', stoppedTypingObject);
     io.in(roomId).emit('receive-stopped-typing', stoppedTypingObject);
   });
 });

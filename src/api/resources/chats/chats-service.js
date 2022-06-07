@@ -12,14 +12,12 @@ const findChatsByClerkUserOwnsAd = (clerk_user_id) =>
       .where({ clerk_user_id })
       .first()
       .then((user) => {
-        console.log('USER FOUND', user);
         let fk_user_id = user.user_id;
 
         db('advertisements')
           .where({ fk_user_id })
           .then((advertisements) => {
             if (advertisements.length) {
-              console.log('ADVERTISEMENTS FOUND', advertisements);
               let ownedAdIdArray = [];
               advertisements.forEach((advertisement) => {
                 ownedAdIdArray.push(advertisement.advertisement_id);
@@ -29,7 +27,6 @@ const findChatsByClerkUserOwnsAd = (clerk_user_id) =>
                 .whereIn('ad_id', ownedAdIdArray)
                 .then((chats) => {
                   if (chats.length) {
-                    console.log('CHATS FOUND', chats);
                     resolve(chats);
                   } else {
                     resolve(null);

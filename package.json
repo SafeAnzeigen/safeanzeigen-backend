@@ -1,6 +1,6 @@
 {
   "name": "safeanzeigen-backend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
   "scripts": {
@@ -20,7 +20,7 @@
     "safeanzeigen"
   ],
   "author": "Sascha Majewsky",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/SafeAnzeigen/safeanzeigen-backend",
   "bugs": {
     "url": "https://github.com/SafeAnzeigen/safeanzeigen-backend/issues"
