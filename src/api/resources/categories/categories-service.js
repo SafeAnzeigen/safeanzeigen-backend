@@ -2,7 +2,8 @@ const db = require('../../../database/db');
 
 const find = () => db('categories');
 
-const findById = (category_id) =>
+// NOT USED
+/* const findById = (category_id) =>
   db('categories')
     .where({ category_id })
     .first()
@@ -15,12 +16,13 @@ const add = (category) =>
 
 const update = (category_id, changes) => db('categories').where({ category_id }).update(changes);
 
-const remove = (category_id) => db('categories').where('category_id', category_id).del();
+const remove = (category_id) => db('categories').where('category_id', category_id).del(); */
 
 module.exports = {
   find,
-  findById,
+  // NOT USED
+  /*  findById,
   add,
   update,
-  remove,
+  remove, */
 };

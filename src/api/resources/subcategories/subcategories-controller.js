@@ -1,5 +1,32 @@
 const SubcategoriesService = require('./subcategories-service');
 
+const getAllSubcategoriesByCategoryName = (req, res) => {
+  const { category_name } = req.params;
+
+  console.log('category_name', category_name);
+
+  if (category_name) {
+    SubcategoriesService.findSubcategoriesByCategoryName(category_name)
+      .then((subcategories) => {
+        subcategories?.length
+          ? res.status(200).json({ subcategories })
+          : res.status(404).json({ message: 'Es konnten keine Subkategorien gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Subkategorien. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Subkategorien.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Subkategorien, da Angaben fehlen.',
+    });
+  }
+};
+
+// Not Used
+/*
 const getAllSubcategories = (req, res) =>
   SubcategoriesService.find()
     .then((subcategories) => res.status(200).json({ subcategories }))
@@ -56,32 +83,9 @@ const getAllSubcategoriesByCategoryId = (req, res) => {
   }
 };
 
-const getAllSubcategoriesByCategoryName = (req, res) => {
-  const { category_name } = req.params;
 
-  console.log('category_name', category_name);
 
-  if (category_name) {
-    SubcategoriesService.findSubcategoriesByCategoryName(category_name)
-      .then((subcategories) => {
-        subcategories?.length
-          ? res.status(200).json({ subcategories })
-          : res.status(404).json({ message: 'Es konnten keine Subkategorien gefunden werden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von Subkategorien. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von Subkategorien.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von Subkategorien, da Angaben fehlen.',
-    });
-  }
-};
-
-const addSubcategory = (req, res) => {
+ const addSubcategory = (req, res) => {
   const subcategoryDTO = ({ fk_category_id, name } = req.body);
 
   if (fk_category_id && name) {
@@ -151,14 +155,15 @@ const deleteSubcategoryById = (req, res) => {
       message: 'Fehler beim Löschen der Subkategorie, da Angaben fehlen.',
     });
   }
-};
+}; */
 
 module.exports = {
-  getAllSubcategories,
+  getAllSubcategoriesByCategoryName,
+  // Not Used
+  /*   getAllSubcategories,
   getSubcategoryById,
   getAllSubcategoriesByCategoryId,
-  getAllSubcategoriesByCategoryName,
   addSubcategory,
   updateSubcategory,
-  deleteSubcategoryById,
+  deleteSubcategoryById, */
 };

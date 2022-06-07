@@ -3,6 +3,8 @@ const router = express.Router();
 
 const controller = require('./chats-controller');
 
+// TODO: SECURE - ALL USED
+
 router.get('/:clerk_user_id', controller.getAllChatsByClerkUserId);
 router.get('/ownerofad/:clerk_user_id', controller.getAllChatsWhereAdOwnerIsClerkUserId);
 router.post('/', controller.addChat);

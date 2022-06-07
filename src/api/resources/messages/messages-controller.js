@@ -23,6 +23,8 @@ const getAllMessagesByAdConversationRoomId = (req, res) => {
   }
 };
 
+// NOT USED
+/* 
 const addMessage = (req, res) => {
   const messagesDTO = ({
     ad_conversation_room_id,
@@ -58,9 +60,10 @@ const addMessage = (req, res) => {
       message: 'Fehler beim Hinzufügen von dieser Nachricht, da Angaben fehlen.',
     });
   }
-};
+}; */
 
 module.exports = {
   getAllMessagesByAdConversationRoomId,
-  addMessage,
+  // NOT USED
+  /* addMessage, */
 };

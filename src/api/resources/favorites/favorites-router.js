@@ -4,10 +4,6 @@ const router = express.Router();
 const authorizationMiddleware = require('../../middlewares/authorization');
 const controller = require('./favorites-controller');
 
-router.get('/', controller.getAllFavorites);
-router.get('/:favorite_id', controller.getFavoriteById);
-router.get('/advertisementid/:advertisement_id', controller.getAllFavoritesByAdvertisementId);
-router.get('/userid/:user_id', controller.getAllFavoritesByUserId);
 router.get(
   '/clerkuserid/:clerk_user_id',
   authorizationMiddleware.validateAuthorization,
@@ -19,5 +15,11 @@ router.delete(
   authorizationMiddleware.validateAuthorization,
   controller.deleteFavoriteByAdvertisementIdForUser
 );
+
+// NOT USED
+/* router.get('/', controller.getAllFavorites);
+router.get('/:favorite_id', controller.getFavoriteById);
+router.get('/advertisementid/:advertisement_id', controller.getAllFavoritesByAdvertisementId);
+router.get('/userid/:user_id', controller.getAllFavoritesByUserId); */
 
 module.exports = router;
