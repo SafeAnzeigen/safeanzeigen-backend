@@ -5,30 +5,17 @@ const authorizationMiddleware = require('../../middlewares/authorization');
 const validationMiddleware = require('../../middlewares/validation');
 const controller = require('./advertisements-controller');
 
-router.get('/', controller.getAllAdvertisements);
-router.get('/public/', controller.getAllPublicAdvertisements);
-router.get('/:advertisement_id', controller.getAdvertisementById);
-router.get('/public/:advertisement_id', controller.getPublicAdvertisementById);
-router.get('/userid/:user_id', controller.getAllAdvertisementsByUserId);
 router.get(
   '/clerkuserid/:clerk_user_id',
   authorizationMiddleware.validateAuthorization,
   validationMiddleware.clerkUserOwnsThisResource,
   controller.getAllAdvertisementsByClerkUserId
 );
-router.get('/categoryid/:category_id', controller.getAllAdvertisementsByCategoryId);
 router.post(
-  '/',
+  '/togglereservation/:advertisement_id',
   authorizationMiddleware.validateAuthorization,
   validationMiddleware.clerkUserOwnsThisResource,
-  authorizationMiddleware.validateValidationSuccessToken,
-  controller.addAdvertisement
-);
-router.put(
-  '/',
-  authorizationMiddleware.validateAuthorization,
-  validationMiddleware.clerkUserOwnsThisResource,
-  controller.updateAdvertisement
+  controller.toggleReservationAdvertisement
 );
 router.post(
   '/delete/:advertisement_id',
@@ -36,11 +23,13 @@ router.post(
   validationMiddleware.clerkUserOwnsThisResource,
   controller.deactivateAdvertisement
 );
+router.get('/public/', controller.getAllPublicAdvertisements);
 router.post(
-  '/togglereservation/:advertisement_id',
+  '/',
   authorizationMiddleware.validateAuthorization,
   validationMiddleware.clerkUserOwnsThisResource,
-  controller.toggleReservationAdvertisement
+  authorizationMiddleware.validateValidationSuccessToken,
+  controller.addAdvertisement
 );
 router.get(
   '/verificationimage/generate/:clerk_user_id',
@@ -54,6 +43,22 @@ router.post(
   validationMiddleware.clerkUserOwnsThisResource,
   controller.validateVerificationImage
 );
+router.get('/public/:advertisement_id', controller.getPublicAdvertisementById);
+
 router.get('/increaseviewcount/:advertisement_id', controller.increaseViewCount);
+
+// NOT USED
+/* 
+router.get('/', controller.getAllAdvertisements);
+router.get('/:advertisement_id', controller.getAdvertisementById);
+router.get('/userid/:user_id', controller.getAllAdvertisementsByUserId);
+router.get('/categoryid/:category_id', controller.getAllAdvertisementsByCategoryId);
+router.put(
+  '/',
+  authorizationMiddleware.validateAuthorization,
+  validationMiddleware.clerkUserOwnsThisResource,
+  controller.updateAdvertisement
+);
+ */
 
 module.exports = router;

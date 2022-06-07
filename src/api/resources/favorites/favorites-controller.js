@@ -1,6 +1,69 @@
 const FavoritesService = require('./favorites-service');
 
-const getAllFavorites = (req, res) =>
+const getAllFavoritesByClerkUserId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    FavoritesService.findFavoritesByClerkUserId(clerk_user_id)
+      .then((favorites) => {
+        favorites?.length
+          ? res.status(200).json({ favorites })
+          : res.status(404).json({ message: 'Es konnten keine Favoriten gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Favoriten. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Favoriten.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Favoriten, da Angaben fehlen.',
+    });
+  }
+};
+
+const addFavorite = (req, res) => {
+  const { fk_advertisement_id, clerk_user_id } = req.body;
+
+  if (fk_advertisement_id && clerk_user_id) {
+    FavoritesService.add(fk_advertisement_id, clerk_user_id)
+      .then((newFavoriteArray) => res.status(201).json({ newFavoriteArray }))
+      .catch((error) => {
+        console.log('Fehler beim Hinzufügen von diesem Favoriten. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Hinzufügen von diesem Favoriten.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Hinzufügen von diesem Favoriten, da Angaben fehlen.',
+    });
+  }
+};
+
+const deleteFavoriteByAdvertisementIdForUser = (req, res) => {
+  const { advertisement_id } = req.params;
+  const clerk_user_id = req.decodedToken.sub;
+
+  if (advertisement_id) {
+    FavoritesService.remove(advertisement_id, clerk_user_id)
+      .then((newFavoriteArray) => res.status(200).json({ newFavoriteArray }))
+      .catch((error) => {
+        console.log('Fehler beim Löschen des Favoriten. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Löschen des Favoriten.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Löschen des Favoriten, da Angaben fehlen.',
+    });
+  }
+};
+
+// NOT USED
+/* const getAllFavorites = (req, res) =>
   FavoritesService.find()
     .then((favorites) => res.status(200).json({ favorites }))
     .catch((error) => {
@@ -77,76 +140,15 @@ const getAllFavoritesByUserId = (req, res) => {
       message: 'Fehler beim Erhalten von Favoriten, da Angaben fehlen.',
     });
   }
-};
-
-const getAllFavoritesByClerkUserId = (req, res) => {
-  const { clerk_user_id } = req.params;
-
-  if (clerk_user_id) {
-    FavoritesService.findFavoritesByClerkUserId(clerk_user_id)
-      .then((favorites) => {
-        favorites?.length
-          ? res.status(200).json({ favorites })
-          : res.status(404).json({ message: 'Es konnten keine Favoriten gefunden werden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von Favoriten. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von Favoriten.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von Favoriten, da Angaben fehlen.',
-    });
-  }
-};
-
-const addFavorite = (req, res) => {
-  const { fk_advertisement_id, clerk_user_id } = req.body;
-
-  if (fk_advertisement_id && clerk_user_id) {
-    FavoritesService.add(fk_advertisement_id, clerk_user_id)
-      .then((newFavoriteArray) => res.status(201).json({ newFavoriteArray }))
-      .catch((error) => {
-        console.log('Fehler beim Hinzufügen von diesem Favoriten. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Hinzufügen von diesem Favoriten.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Hinzufügen von diesem Favoriten, da Angaben fehlen.',
-    });
-  }
-};
-
-const deleteFavoriteByAdvertisementIdForUser = (req, res) => {
-  const { advertisement_id } = req.params;
-  const clerk_user_id = req.decodedToken.sub;
-
-  if (advertisement_id) {
-    FavoritesService.remove(advertisement_id, clerk_user_id)
-      .then((newFavoriteArray) => res.status(200).json({ newFavoriteArray }))
-      .catch((error) => {
-        console.log('Fehler beim Löschen des Favoriten. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Löschen des Favoriten.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Löschen des Favoriten, da Angaben fehlen.',
-    });
-  }
-};
+}; */
 
 module.exports = {
-  getAllFavorites,
-  getFavoriteById,
-  getAllFavoritesByAdvertisementId,
-  getAllFavoritesByUserId,
   getAllFavoritesByClerkUserId,
   addFavorite,
   deleteFavoriteByAdvertisementIdForUser,
+  // NOT USED
+  /*   getAllFavorites,
+  getFavoriteById,
+  getAllFavoritesByAdvertisementId,
+  getAllFavoritesByUserId, */
 };

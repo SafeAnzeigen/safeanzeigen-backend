@@ -12,57 +12,11 @@ const getAllUsers = (req, res) =>
       });
     });
 
-const getUserById = (req, res) => {
-  const { user_id } = req.params;
-
-  if (user_id) {
-    UsersService.findById(user_id)
-      .then((user) => {
-        user
-          ? res.status(200).json({ user })
-          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von diesem Nutzer.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
-    });
-  }
-};
-
 const getUserByClerkId = (req, res) => {
   const { clerk_user_id } = req.params;
 
   if (clerk_user_id) {
     UsersService.getUserByClerkId(clerk_user_id)
-      .then((user) => {
-        user
-          ? res.status(200).json({ user })
-          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von diesem Nutzer.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
-    });
-  }
-};
-
-const getUserByEmail = (req, res) => {
-  const { email } = req.params;
-
-  if (email) {
-    UsersService.findByEmail(email)
       .then((user) => {
         user
           ? res.status(200).json({ user })
@@ -184,25 +138,6 @@ const updateUser = (req, res) => {
   }
 };
 
-const deactivateUser = (req, res) => {
-  const { user_id } = req.params;
-
-  if (user_id) {
-    UsersService.deactivate(user_id, { is_active: false })
-      .then(() => res.status(200).json({ message: 'Der Nutzer wurde deaktiviert.' }))
-      .catch((error) => {
-        console.log('Fehler beim Deaktivieren des Nutzers. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Deaktivieren des Nutzers.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Deaktivieren des Nutzers, da Angaben fehlen.',
-    });
-  }
-};
-
 const contactViaEmail = (req, res) => {
   const emailContactDTO = ({ firstname, lastname, email, phone, subject, message } = req.body);
   if (firstname && lastname && email && phone && subject && message) {
@@ -275,15 +210,83 @@ const getUserHasChatNotification = (req, res) => {
   }
 };
 
+// NOT USED
+/* const getUserById = (req, res) => {
+  const { user_id } = req.params;
+
+  if (user_id) {
+    UsersService.findById(user_id)
+      .then((user) => {
+        user
+          ? res.status(200).json({ user })
+          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von diesem Nutzer.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
+    });
+  }
+};
+
+const getUserByEmail = (req, res) => {
+  const { email } = req.params;
+
+  if (email) {
+    UsersService.findByEmail(email)
+      .then((user) => {
+        user
+          ? res.status(200).json({ user })
+          : res.status(404).json({ message: 'Dieser Nutzer wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von diesem Nutzer. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von diesem Nutzer.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von diesem Nutzer, da Angaben fehlen.',
+    });
+  }
+};
+
+const deactivateUser = (req, res) => {
+  const { user_id } = req.params;
+
+  if (user_id) {
+    UsersService.deactivate(user_id, { is_active: false })
+      .then(() => res.status(200).json({ message: 'Der Nutzer wurde deaktiviert.' }))
+      .catch((error) => {
+        console.log('Fehler beim Deaktivieren des Nutzers. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Deaktivieren des Nutzers.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Deaktivieren des Nutzers, da Angaben fehlen.',
+    });
+  }
+}; */
+
 module.exports = {
   getAllUsers,
-  getUserById,
   getUserByClerkId,
-  getUserByEmail,
   addUser,
   updateUser,
-  deactivateUser,
   contactViaEmail,
   setUserVisitedChat,
   getUserHasChatNotification,
+
+  // NOT USED
+  /*  getUserById,
+  getUserByEmail,
+  deactivateUser, */
 };
