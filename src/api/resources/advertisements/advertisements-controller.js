@@ -24,31 +24,6 @@ const getAllPublicAdvertisements = (req, res) =>
       });
     });
 
-const getAdvertisementById = (req, res) => {
-  const { advertisement_id } = req.params;
-
-  console.log('Advertisement ID: ', advertisement_id);
-
-  if (advertisement_id) {
-    AdvertisementsService.findById(advertisement_id)
-      .then((advertisement) => {
-        advertisement
-          ? res.status(200).json({ advertisement })
-          : res.status(404).json({ message: 'Diese Anzeige wurde nicht gefunden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von dieser Anzeige. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von dieser Anzeige.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von dieser Anzeige, da Angaben fehlen.',
-    });
-  }
-};
-
 const getPublicAdvertisementById = (req, res) => {
   const { advertisement_id } = req.params;
 
@@ -72,57 +47,11 @@ const getPublicAdvertisementById = (req, res) => {
   }
 };
 
-const getAllAdvertisementsByUserId = (req, res) => {
-  const { clerk_user_id } = req.params;
-
-  if (clerk_user_id) {
-    AdvertisementsService.findAdvertisementsByUserId(clerk_user_id)
-      .then((advertisements) => {
-        advertisements?.length
-          ? res.status(200).json({ advertisements })
-          : res.status(404).json({ message: 'Es konnten keine Anzeigen gefunden werden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von Anzeigen. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von Anzeigen.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von Anzeigen, da Angaben fehlen.',
-    });
-  }
-};
-
 const getAllAdvertisementsByClerkUserId = (req, res) => {
   const { clerk_user_id } = req.params;
 
   if (clerk_user_id) {
     AdvertisementsService.findAdvertisementsByClerkUserId(clerk_user_id)
-      .then((advertisements) => {
-        advertisements?.length
-          ? res.status(200).json({ advertisements })
-          : res.status(404).json({ message: 'Es konnten keine Anzeigen gefunden werden.' });
-      })
-      .catch((error) => {
-        console.log('Fehler beim Erhalten von Anzeigen. ', error);
-        return res.status(500).json({
-          message: 'Fehler beim Erhalten von Anzeigen.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler beim Erhalten von Anzeigen, da Angaben fehlen.',
-    });
-  }
-};
-
-const getAllAdvertisementsByCategoryId = (req, res) => {
-  const { category_id } = req.params;
-
-  if (category_id) {
-    AdvertisementsService.findAdvertisementsByCategoryId(category_id)
       .then((advertisements) => {
         advertisements?.length
           ? res.status(200).json({ advertisements })
@@ -249,81 +178,6 @@ const addAdvertisement = (req, res) => {
   }
 };
 
-const updateAdvertisement = (req, res) => {
-  const updateAdvertisementDTO = ({
-    fk_category_id,
-    type,
-    title,
-    price,
-    price_type,
-    description,
-    is_verified,
-    article_image_1,
-    article_image_2,
-    article_image_3,
-    article_image_4,
-    article_image_5,
-    article_video,
-    show_name,
-    show_address,
-    show_phone,
-    show_user_photo,
-    location_street,
-    location_street_number,
-    location_city,
-    location_zip,
-    location_county,
-    location_country,
-  } = req.body);
-
-  if (
-    req.body.advertisement_id &&
-    (fk_category_id ||
-      type ||
-      title ||
-      price ||
-      price_type ||
-      description ||
-      is_verified ||
-      article_image_1 ||
-      article_image_2 ||
-      article_image_3 ||
-      article_image_4 ||
-      article_image_5 ||
-      article_video ||
-      show_name ||
-      show_address ||
-      show_phone ||
-      show_user_photo ||
-      location_street ||
-      location_street_number ||
-      location_city ||
-      location_zip ||
-      location_county ||
-      location_country)
-  ) {
-    AdvertisementsService.update(req.body.advertisement_id, updateAdvertisementDTO)
-      .then((successFlag) =>
-        successFlag > 0
-          ? res.status(200).json({ message: 'Die Anzeige wurde aktualisiert.' })
-          : res.status(500).json({
-              message:
-                'Fehler bei der Aktualisierung der Anzeige, da Fehler in der Datenbank auftraten.',
-            })
-      )
-      .catch((error) => {
-        console.log('Fehler bei der Aktualisierung der Anzeige. ', error);
-        return res.status(500).json({
-          message: 'Fehler bei der Aktualisierung der Anzeige.',
-        });
-      });
-  } else {
-    return res.status(400).json({
-      message: 'Fehler bei der Aktualisierung der Anzeige, da Angaben fehlen.',
-    });
-  }
-};
-
 const deactivateAdvertisement = (req, res) => {
   const { advertisement_id } = req.params;
 
@@ -443,19 +297,172 @@ const increaseViewCount = (req, res) => {
   }
 };
 
+// NOT USED
+/* 
+const getAdvertisementById = (req, res) => {
+  const { advertisement_id } = req.params;
+
+  console.log('Advertisement ID: ', advertisement_id);
+
+  if (advertisement_id) {
+    AdvertisementsService.findById(advertisement_id)
+      .then((advertisement) => {
+        advertisement
+          ? res.status(200).json({ advertisement })
+          : res.status(404).json({ message: 'Diese Anzeige wurde nicht gefunden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von dieser Anzeige. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von dieser Anzeige.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von dieser Anzeige, da Angaben fehlen.',
+    });
+  }
+};
+
+
+const getAllAdvertisementsByUserId = (req, res) => {
+  const { clerk_user_id } = req.params;
+
+  if (clerk_user_id) {
+    AdvertisementsService.findAdvertisementsByUserId(clerk_user_id)
+      .then((advertisements) => {
+        advertisements?.length
+          ? res.status(200).json({ advertisements })
+          : res.status(404).json({ message: 'Es konnten keine Anzeigen gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Anzeigen. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Anzeigen.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Anzeigen, da Angaben fehlen.',
+    });
+  }
+};
+
+
+const getAllAdvertisementsByCategoryId = (req, res) => {
+  const { category_id } = req.params;
+
+  if (category_id) {
+    AdvertisementsService.findAdvertisementsByCategoryId(category_id)
+      .then((advertisements) => {
+        advertisements?.length
+          ? res.status(200).json({ advertisements })
+          : res.status(404).json({ message: 'Es konnten keine Anzeigen gefunden werden.' });
+      })
+      .catch((error) => {
+        console.log('Fehler beim Erhalten von Anzeigen. ', error);
+        return res.status(500).json({
+          message: 'Fehler beim Erhalten von Anzeigen.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler beim Erhalten von Anzeigen, da Angaben fehlen.',
+    });
+  }
+};
+
+
+const updateAdvertisement = (req, res) => {
+  const updateAdvertisementDTO = ({
+    fk_category_id,
+    type,
+    title,
+    price,
+    price_type,
+    description,
+    is_verified,
+    article_image_1,
+    article_image_2,
+    article_image_3,
+    article_image_4,
+    article_image_5,
+    article_video,
+    show_name,
+    show_address,
+    show_phone,
+    show_user_photo,
+    location_street,
+    location_street_number,
+    location_city,
+    location_zip,
+    location_county,
+    location_country,
+  } = req.body);
+
+  if (
+    req.body.advertisement_id &&
+    (fk_category_id ||
+      type ||
+      title ||
+      price ||
+      price_type ||
+      description ||
+      is_verified ||
+      article_image_1 ||
+      article_image_2 ||
+      article_image_3 ||
+      article_image_4 ||
+      article_image_5 ||
+      article_video ||
+      show_name ||
+      show_address ||
+      show_phone ||
+      show_user_photo ||
+      location_street ||
+      location_street_number ||
+      location_city ||
+      location_zip ||
+      location_county ||
+      location_country)
+  ) {
+    AdvertisementsService.update(req.body.advertisement_id, updateAdvertisementDTO)
+      .then((successFlag) =>
+        successFlag > 0
+          ? res.status(200).json({ message: 'Die Anzeige wurde aktualisiert.' })
+          : res.status(500).json({
+              message:
+                'Fehler bei der Aktualisierung der Anzeige, da Fehler in der Datenbank auftraten.',
+            })
+      )
+      .catch((error) => {
+        console.log('Fehler bei der Aktualisierung der Anzeige. ', error);
+        return res.status(500).json({
+          message: 'Fehler bei der Aktualisierung der Anzeige.',
+        });
+      });
+  } else {
+    return res.status(400).json({
+      message: 'Fehler bei der Aktualisierung der Anzeige, da Angaben fehlen.',
+    });
+  }
+}; */
+
 module.exports = {
   getAllAdvertisements,
   getAllPublicAdvertisements,
-  getAdvertisementById,
   getPublicAdvertisementById,
-  getAllAdvertisementsByUserId,
   getAllAdvertisementsByClerkUserId,
-  getAllAdvertisementsByCategoryId,
   addAdvertisement,
-  updateAdvertisement,
   deactivateAdvertisement,
   toggleReservationAdvertisement,
   generateVerificationImage,
   validateVerificationImage,
   increaseViewCount,
+  // NOT USED
+  /*   getAllAdvertisements,
+  getAllAdvertisementsByUserId,
+  getAllAdvertisementsByCategoryId,
+  getAdvertisementById,
+  updateAdvertisement, */
 };

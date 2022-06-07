@@ -10,6 +10,8 @@ const getAllCategories = (req, res) =>
       });
     });
 
+//NOT USED
+/* 
 const getCategoryById = (req, res) => {
   const { category_id } = req.params;
 
@@ -102,12 +104,13 @@ const deleteCategoryById = (req, res) => {
       message: 'Fehler beim Löschen der Kategorie, da Angaben fehlen.',
     });
   }
-};
+}; */
 
 module.exports = {
   getAllCategories,
-  getCategoryById,
+  // NOT USED
+  /* getCategoryById,
   addCategory,
   updateCategory,
-  deleteCategoryById,
+  deleteCategoryById, */
 };

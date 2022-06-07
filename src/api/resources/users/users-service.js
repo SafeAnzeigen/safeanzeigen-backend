@@ -32,20 +32,12 @@ const getUserByClerkId = (clerk_user_id) =>
     .first()
     .then((user) => (user ? user : null));
 
-const findByEmail = (email) =>
-  db('users')
-    .where({ email })
-    .first()
-    .then((user) => (user ? user : null));
-
 const add = (user) =>
   db('users')
     .insert(user, 'user_id')
     .then(([user_id]) => findById(user_id));
 
 const update = (clerk_user_id, changes) => db('users').where({ clerk_user_id }).update(changes);
-
-const deactivate = (user_id, deactivation) => db('users').where({ user_id }).update(deactivation);
 
 const sendMailContactRequest = async (emailContactDTO) =>
   new Promise((resolve, reject) => {
@@ -138,14 +130,24 @@ const getUserHasChatNotification = (clerk_user_id) =>
     });
   });
 
+// NOT USED
+/*   const findByEmail = (email) =>
+      db('users')
+        .where({ email })
+        .first()
+        .then((user) => (user ? user : null));
+
+     const deactivate = (user_id, deactivation) => db('users').where({ user_id }).update(deactivation); */
+
 module.exports = {
   find,
   findById,
   getUserByClerkId,
-  findByEmail,
   add,
   update,
-  deactivate,
   sendMailContactRequest,
   getUserHasChatNotification,
+  // NOT USED
+  /*  findByEmail,
+  deactivate, */
 };

@@ -158,11 +158,6 @@ const findPublicById = (advertisement_id) =>
       });
   });
 
-const findAdvertisementsByUserId = (fk_user_id) =>
-  db('advertisements')
-    .where({ fk_user_id })
-    .then((advertisements) => (advertisements.length ? advertisements : null));
-
 const findAdvertisementsByClerkUserId = (clerk_user_id) =>
   new Promise((resolve, reject) => {
     db('users')
@@ -184,11 +179,6 @@ const findAdvertisementsByClerkUserId = (clerk_user_id) =>
         reject(error);
       });
   });
-
-const findAdvertisementsByCategoryId = (fk_category_id) =>
-  db('advertisements')
-    .where({ fk_category_id })
-    .then((advertisements) => (advertisements.length ? advertisements : null));
 
 const add = (advertisementDTO) =>
   new Promise((resolve, reject) => {
@@ -331,19 +321,31 @@ const increaseViewCount = (advertisement_id) =>
       });
   });
 
+//NOT USED
+/* const findAdvertisementsByUserId = (fk_user_id) =>
+db('advertisements')
+  .where({ fk_user_id })
+  .then((advertisements) => (advertisements.length ? advertisements : null));
+  
+const findAdvertisementsByCategoryId = (fk_category_id) =>
+db('advertisements')
+  .where({ fk_category_id })
+  .then((advertisements) => (advertisements.length ? advertisements : null)); */
+
 module.exports = {
   find,
   findAllPublicAdvertisements,
   findById,
   findPublicById,
-  findAdvertisementsByUserId,
   findAdvertisementsByClerkUserId,
-  findAdvertisementsByCategoryId,
   add,
-  update,
   deactivate,
   toggleReservation,
   generateVerificationImage,
   validateVerificationImage,
   increaseViewCount,
+  //NOT USED
+  /* findAdvertisementsByUserId,
+  findAdvertisementsByCategoryId,
+  update, */
 };
